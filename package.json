@@ -18,7 +18,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "react-start": "react-scripts start",
+    "react-start": "set BROWSER=none&& react-scripts start",
     "electron-start": "electron ./electron-starter.js",
     "dev": "concurrently \"npm run react-start\" \"wait-on http://localhost:3000 && npm run electron-start\""
   },
