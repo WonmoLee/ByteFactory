@@ -8,8 +8,10 @@ function createWindow () {
     icon: 'public/favicon.ico', // 아이콘 경로 설정
     webPreferences: {
       nodeIntegration: true
-    }
+    },
   });
+
+  win.setMenu(null); // 메뉴바 제거
 
   // 리액트 앱을 로드
   win.loadURL('http://localhost:3000/');
