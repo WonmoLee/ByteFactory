@@ -10,6 +10,7 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
+    "cross-env": "^7.0.3",
     "electron-is-dev": "^3.0.1",
     "react": "^18.2.0",
     "react-diff-viewer": "^3.1.1",
@@ -31,7 +32,7 @@
     "react-start": "set BROWSER=none&& react-scripts start",
     "electron-start": "electron ./public/electron.js",
     "dev": "concurrently \"npm run react-start\" \"wait-on http://localhost:3000 && npm run electron-start\"",
-    "deploy:win64": "electron-builder --win nsis:x64"
+    "deploy": "electron-builder build"
   },
   "eslintConfig": {
     "extends": [
@@ -72,8 +73,13 @@
       "allowToChangeInstallationDirectory": true
     },
     "mac": {
-      "target": "dmg"
+      "hardenedRuntime": true,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.inherit.plist",
+      "gatekeeperAssess": false,
+      "identity": "Developer ID Application: Your Name (TEAMID)"
     },
+    "afterSign": "scripts/afterSignHook.js",
     "linux": {
       "target": "AppImage"
     }
