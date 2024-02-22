@@ -1,18 +1,23 @@
 {
   "name": "bf",
   "version": "0.1.0",
+  "main": "electron-starter.js",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
-    "electron": "^29.0.0",
-    "electron-builder": "^24.12.0",
     "react": "^18.2.0",
     "react-diff-viewer": "^3.1.1",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "electron": "^29.0.0",
+    "electron-builder": "^24.12.0",
+    "wait-on": "^7.2.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -40,5 +45,27 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "build": {
+    "appId": "ByteFactory",
+    "productName": "ByteFactory",
+    "directories": {
+      "buildResources": "assets",
+      "output": "release"
+    },
+    "files": [
+      "build/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
   }
 }
