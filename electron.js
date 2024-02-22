@@ -3,8 +3,9 @@ const { app, BrowserWindow } = require('electron');
 function createWindow () {
   // 브라우저 창을 생성
   let win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1600,
+    height: 800,
+    icon: 'public/favicon.ico', // 아이콘 경로 설정
     webPreferences: {
       nodeIntegration: true
     }
