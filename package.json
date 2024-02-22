@@ -4,12 +4,13 @@
   "description": "Development support app",
   "author": "Wonmo Lee",
   "license": "MIT",
-  "main": "electron-starter.js",
+  "main": "electron.js",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
+    "electron-is-dev": "^3.0.1",
     "react": "^18.2.0",
     "react-diff-viewer": "^3.1.1",
     "react-dom": "^18.2.0",
@@ -53,7 +54,7 @@
     "appId": "ByteFactory",
     "productName": "ByteFactory",
     "directories": {
-      "buildResources": "./build/",
+      "buildResources": "assets",
       "output": "release"
     },
     "files": [
