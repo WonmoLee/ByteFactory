@@ -25,12 +25,13 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "cross-env PUBLIC_URL=./ react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "react-start": "set BROWSER=none&& react-scripts start",
     "electron-start": "electron ./electron.js",
-    "dev": "concurrently \"npm run react-start\" \"wait-on http://localhost:3000 && npm run electron-start\""
+    "dev": "concurrently \"npm run react-start\" \"wait-on http://localhost:3000 && npm run electron-start\"",
+    "deploy:win64": "electron-builder --win nsis:x64"
   },
   "eslintConfig": {
     "extends": [
@@ -53,18 +54,22 @@
   "build": {
     "appId": "ByteFactory",
     "productName": "ByteFactory",
+    "asar": true,
     "directories": {
-      "buildResources": "assets",
+      "buildResources": "build",
       "output": "release"
     },
     "files": [
-      "build/**/*",
-      "node_modules/**/*",
-      "package.json"
+      "package.json",
+      "build/**/*"
     ],
     "win": {
       "target": "nsis",
-      "icon": "./public/favicon.ico"
+      "icon": "./public/logo.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
     },
     "mac": {
       "target": "dmg"
