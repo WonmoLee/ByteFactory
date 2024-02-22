@@ -28,7 +28,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "react-start": "set BROWSER=none&& react-scripts start",
-    "electron-start": "electron ./electron-starter.js",
+    "electron-start": "electron ./electron.js",
     "dev": "concurrently \"npm run react-start\" \"wait-on http://localhost:3000 && npm run electron-start\""
   },
   "eslintConfig": {
@@ -53,7 +53,7 @@
     "appId": "ByteFactory",
     "productName": "ByteFactory",
     "directories": {
-      "buildResources": "assets",
+      "buildResources": "./build/",
       "output": "release"
     },
     "files": [
@@ -62,7 +62,8 @@
       "package.json"
     ],
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "icon": "./public/favicon.ico"
     },
     "mac": {
       "target": "dmg"
