@@ -16,6 +16,8 @@ import('electron-is-dev').then((module) => {
         contextIsolation: false,
       },
     });
+
+    win.setMenu(null);
   
     // 개발 환경인지 프로덕션 환경인지에 따라 URL 분기
     if (isDev) {
@@ -26,7 +28,6 @@ import('electron-is-dev').then((module) => {
     } else {
       // 프로덕션 환경: 빌드된 React 앱 로드
       win.loadURL(`file://${path.join(__dirname, '../build/index.html')}`);
-      console.log(`file://${path.join(__dirname, '../build/index.html')}`);
     }
   
     // 창이 닫힐 때 발생하는 이벤트
