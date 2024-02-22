@@ -1,8 +1,9 @@
 {
-  "author": "Wonmo Lee",
-  "license": "MIT",
   "name": "bf",
   "version": "0.1.0",
+  "description": "Development support app",
+  "author": "Wonmo Lee",
+  "license": "MIT",
   "main": "electron-starter.js",
   "private": true,
   "dependencies": {
