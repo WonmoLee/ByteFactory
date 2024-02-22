@@ -4,7 +4,7 @@
 
 .lineNumbers {
     width: 40px; /* 행 번호 영역의 너비 조정 */
-    height: 500px; /* 높이를 textarea와 동일하게 설정 */
+    height: 400px; /* 높이를 textarea와 동일하게 설정 */
     overflow-y: auto; /* 스크롤 가능하도록 설정 */
     margin-top: 3px;
     margin-right: 10px;
@@ -22,7 +22,7 @@
 
 .textArea {
     width: calc(100% - 50px); /* 행 번호 영역 너비를 고려하여 조정 */
-    height: 500px;
+    height: 400px;
     overflow-y: auto;
 }
   
