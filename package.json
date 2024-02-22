@@ -1,4 +1,6 @@
 {
+  "author": "Wonmo Lee",
+  "license": "MIT",
   "name": "bf",
   "version": "0.1.0",
   "main": "electron-starter.js",
