@@ -74,8 +74,8 @@
     },
     "mac": {
       "identity": null,
-      "target": ["dir"],
-      "icon": "./public/logo.png"
+      "target": ["dmg"],
+      "icon": "./public/logo512.png"
     },
     "linux": {
       "target": "AppImage"
