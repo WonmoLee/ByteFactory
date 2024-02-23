@@ -101,3 +101,11 @@
     opacity: 1;
   }
 }
+
+.content-area {
+  transition: margin-left 1s;
+}
+
+.content-shifted {
+  margin-left: 100px; /* 로고의 가로 길이에 맞춰 조정 */
+}
