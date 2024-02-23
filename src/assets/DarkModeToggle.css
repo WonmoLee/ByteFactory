@@ -1,0 +1,29 @@
+.toggle-container {
+    width: 60px; /* 너비 */
+    height: 30px; /* 높이 */
+    border-radius: 15px; /* 둥근 모서리 */
+    background-color: #ccc; /* 라이트 모드 배경색 */
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* 부드러운 색상 전환 */
+  }
+  
+  .toggle-container.dark-mode {
+    background-color: #555; /* 다크 모드 배경색 - 어두운 회색으로 변경 */
+  }
+  
+  .toggle-switch {
+    position: absolute;
+    top: 3px; /* 토글 버튼의 상단 여백 */
+    left: 3px; /* 토글 버튼의 좌측 여백 */
+    width: 24px; /* 토글 버튼 너비 */
+    height: 24px; /* 토글 버튼 높이 */
+    background-color: white; /* 토글 버튼 색상 */
+    border-radius: 50%; /* 원형 토글 버튼 */
+    transition: transform 0.3s ease; /* 부드러운 이동 전환 */
+  }
+  
+  .toggle-container.dark-mode .toggle-switch {
+    transform: translateX(30px); /* 다크 모드에서의 위치 이동 */
+  }
+  
