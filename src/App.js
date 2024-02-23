@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import Card from './components/Card';
 import DarkModeToggle from './components/DarkModeToggle';
 import TextDiffViewer from './pages/TextDiffViewer';
@@ -7,39 +7,47 @@ import './App.css';
 import logo from './assets/imgs/logo.png';
 
 const App = () => {
-  // 카드의 표시 여부를 관리하는 상태
   const [showCards, setShowCards] = useState(true);
+  const [navigateHome, setNavigateHome] = useState(false); // 홈으로 리다이렉트하는 상태 추가
 
-  // 카드 클릭 이벤트 핸들러
   const handleCardClick = () => {
-    setShowCards(false); // 모든 카드를 숨깁니다.
+    setShowCards(false);
+    setNavigateHome(false); // 카드 클릭 시에는 홈으로 리다이렉트하지 않음
+  };
+
+  const handleLogoClick = () => {
+    setShowCards(true); // 모든 카드를 다시 표시
+    setNavigateHome(true); // 홈으로 리다이렉트
   };
 
   return (
     <Router>
       <div className="App" style={{padding: '20px'}}>
         <header className="App-header">
-          <div className="center-container">
-            <img src={logo} alt="ByteFactory" />B Y T E F A C T O R Y
+          <div className="center-container" onClick={handleLogoClick}>
+            <img src={logo} alt="ByteFactory" style={{cursor: 'pointer'}}/>B Y T E F A C T O R Y
           </div>
           <div className="right-container">
             <DarkModeToggle />
           </div>
         </header>
         {showCards && (
-          <div onClick={handleCardClick}>
-            <Link to="/TextDiffViewer">
+          <div>
+            <Link to="/TextDiffViewer" onClick={handleCardClick}>
               <Card title="TextDiffViewer" description="텍스트 비교 프로그램입니다."/>
             </Link>
-            <Link to="/b">
+            <Link to="/b" onClick={handleCardClick}>
               <Card title="서비스 2" description="준비중입니다." />
             </Link>
           </div>
         )}
-        <Routes>
-          <Route path="/TextDiffViewer" element={<TextDiffViewer />} />
-          {/* <Route path="/b" component={B} /> 여기서도 B 컴포넌트를 element로 수정해야 합니다. */}
-        </Routes>
+        {navigateHome ? <Navigate to="/" replace={true} /> : null}
+        {!navigateHome && (
+          <Routes>
+            <Route path="/TextDiffViewer" element={<TextDiffViewer />} />
+            {/* <Route path="/b" element={<B />} /> 여기서 B 컴포넌트를 정의하고 element로 추가해야 합니다. */}
+          </Routes>
+        )}
       </div>
     </Router>
   );
