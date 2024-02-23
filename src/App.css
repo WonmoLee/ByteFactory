@@ -57,11 +57,47 @@
 }
 
 .logo-slide-out {
-  animation: slideOut 0.5s forwards; /* 애니메이션 지속시간과 방향을 설정합니다 */
+  animation: slideOut 1s forwards; /* 애니메이션 지속시간과 방향을 설정합니다 */
 }
 
 @keyframes slideOut {
   to {
     transform: translateX(-44%); /* 왼쪽으로 이동하도록 transform을 적용합니다 */
+  }
+}
+
+.logo-slide-in {
+  animation: slideIn 1s forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-44%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.text-fade-out {
+  animation: fadeOutText 1s forwards;
+}
+
+@keyframes fadeOutText {
+  to {
+    opacity: 0;
+  }
+}
+
+.text-fade-in {
+  animation: fadeInText 1s forwards;
+}
+
+@keyframes fadeInText {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
