@@ -28,6 +28,18 @@ const TextDiffViewer = () => {
         return lineNumbers;
     };
 
+    // react-diff-viewer style 설정
+    const styles = {
+        diffContainer: {
+            width: 'auto', // 전체 너비를 사용합니다.
+            minWidth: 'yourMinWidth', // 최소 너비를 설정합니다 (예: '400px').
+            maxWidth: 'yourMaxWidth', // 최대 너비를 설정합니다 (예: '800px').
+        },
+        line: {
+            wordBreak: 'break-all', // 긴 단어가 있을 경우 줄바꿈을 허용합니다.
+        }
+    };
+
     return (
         <div>
             <h1>TextDiffViewer</h1>
@@ -63,7 +75,12 @@ const TextDiffViewer = () => {
                     </div>
                 </div>
             </div>
-            <ReactDiffViewer oldValue={oldText} newValue={newText} splitView={true} />
+            <ReactDiffViewer
+                oldValue={oldText}
+                newValue={newText}
+                splitView={true}
+                styles={styles}
+            />
         </div>
     );
 };
