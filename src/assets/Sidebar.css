@@ -1,0 +1,29 @@
+.sidebar {
+    width: 0;
+    height: 100%;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #333; /* 빨간색 배경 */
+    overflow-x: hidden;
+    transition: 0.5s; /* 부드러운 전환 효과 */
+  }
+  
+  .sidebar.open {
+    width: 50px; /* 사이드바가 열릴 때의 너비 */
+  }
+  
+  /* 아이콘 스타일링 */
+  .icon {
+    padding: 8px 16px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #fff;
+    display: block;
+    transition: 0.3s;
+  }
+  
+  .icon:hover {
+    color: #f1f1f1;
+  }  
