@@ -30,6 +30,7 @@ const TextDiffViewer = () => {
 
     return (
         <div>
+            <h1>TextDiffViewer</h1>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
                 <div style={{ width: '48%' }}>
                     <h2>원본 텍스트</h2>
