@@ -1,0 +1,52 @@
+.modal {
+    position: fixed; /* 모달 위치를 고정시킵니다 */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000; /* z-index를 높게 설정하여 다른 요소들 위에 표시됩니다 */
+    display: flex; /* Flexbox를 사용해 가운데 정렬합니다 */
+    align-items: center; /* 수직 가운데 정렬 */
+    justify-content: center; /* 수평 가운데 정렬 */
+    background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+}
+  
+.modal-content {
+    z-index: 1001; /* 모달 컨텐츠를 모달 배경보다 더 높은 z-index로 설정합니다 */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: auto; /* 모달의 너비, 필요에 따라 조정하세요 */
+    max-width: 500px; /* 모달의 최대 너비, 필요에 따라 조정하세요 */
+    position: relative; /* 닫기 버튼의 절대 위치를 위한 기준점 */
+}  
+
+.close-button {
+    position: absolute;
+    top: 0.5rem; /* 상단에서 적당한 간격 */
+    right: 0.5rem; /* 우측에서 적당한 간격 */
+    background: none;
+    border: none;
+    font-size: 2rem; /* X 표시 크기 조정 */
+    cursor: pointer;
+    line-height: 1; /* 버튼 내 텍스트 높이 조정 */
+    padding: 0; /* 패딩 제거 */
+}
+  
+.close-button:hover {
+    color: #eb4034;
+}
+  
+/* Modal.css */
+.modal-image {
+    font-size: 36px; /* 이모지 크기를 조정합니다 */
+    text-align: center; /* 가운데 정렬 */
+    display: flex; /* Flexbox를 사용합니다 */
+    justify-content: center; /* 가로축 가운데 정렬 */
+    align-items: center; /* 세로축 가운데 정렬 */
+    width: 100%; /* 부모 컨테이너의 전체 너비를 사용합니다 */
+    height: 100px; /* 높이를 지정합니다 */
+    margin-bottom: 20px; /* 이모지와 텍스트 사이의 여백을 추가합니다 */
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* 이모지의 그림자를 추가하여 대비를 높입니다 */
+}  
