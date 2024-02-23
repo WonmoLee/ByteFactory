@@ -55,3 +55,13 @@
   justify-content: flex-end; /* 오른쪽 정렬 */
   min-width: max-content; /* 컨테이너의 최소 너비를 내용물 크기에 맞춤 */
 }
+
+.logo-slide-out {
+  animation: slideOut 0.5s forwards; /* 애니메이션 지속시간과 방향을 설정합니다 */
+}
+
+@keyframes slideOut {
+  to {
+    transform: translateX(-44%); /* 왼쪽으로 이동하도록 transform을 적용합니다 */
+  }
+}
