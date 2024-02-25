@@ -13,7 +13,7 @@
   
 .modal-content {
     z-index: 1001; /* 모달 컨텐츠를 모달 배경보다 더 높은 z-index로 설정합니다 */
-    background-color: #fff;
+    background-color: #555;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

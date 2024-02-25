@@ -1,5 +1,6 @@
 .textAreaContainer {
     display: flex;
+    width: 800px;
 }
 
 .lineNumbers {

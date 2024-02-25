@@ -1,29 +1,30 @@
 .sidebar {
-    width: 0;
-    height: 100%;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    background-color: #333; /* 빨간색 배경 */
-    overflow-x: hidden;
-    transition: 0.5s; /* 부드러운 전환 효과 */
-  }
-  
-  .sidebar.open {
-    width: 50px; /* 사이드바가 열릴 때의 너비 */
-  }
+  width: 0;
+  height: calc(100% - 0px); /* 헤더 높이만큼 뺀 나머지 높이 */
+  position: fixed;
+  z-index: 1; /* 헤더보다 낮은 z-index 값을 가지도록 조정할 수 있습니다. */
+  top: 73px; /* 헤더의 높이에 맞춰 조정 */
+  left: 0;
+  background-color: #333;
+  overflow-x: hidden;
+  transition: 1s;
+}
+
+.sidebar.open {
+  width: 65px; /* 사이드바가 열릴 때의 너비 */
+}
   
   /* 아이콘 스타일링 */
-  .icon {
-    padding: 8px 16px;
-    text-decoration: none;
-    font-size: 25px;
-    color: #fff;
-    display: block;
-    transition: 0.3s;
-  }
+.icon {
+  padding: 8px 16px;
+  text-decoration: none;
+  text-align: center;
+  font-size: 25px;
+  color: #fff;
+  display: block;
+  transition: 0.3s;
+}
   
-  .icon:hover {
-    color: #f1f1f1;
-  }  
+.icon:hover {
+  color: #f1f1f1;
+}  

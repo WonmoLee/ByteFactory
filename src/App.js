@@ -26,7 +26,7 @@ const App = () => {
     setLogoClass('logo-slide-out');
     setTextClass('text-fade-out');
     // 로고의 가로 길이만큼 영역을 부여합니다.
-    setLogoContainerStyle({flexGrow: 0, flexShrink: 0, flexBasis: '100px'});
+    setLogoContainerStyle({flexGrow: 0, flexShrink: 0, flexBasis: '100px', zIndex: 1000});
     setSidebarOpen(true);
 
     setTimeout(() => {
@@ -59,7 +59,7 @@ const App = () => {
 
   return (
     <Router>
-      <div className="App" style={{padding: '20px'}}>
+      <div className="App">
         <header className="App-header" style={logoContainerStyle}>
           <div className={`center-container ${logoClass}`} onClick={handleLogoClick}>
             <img src={logo} alt="ByteFactory" style={{cursor: 'pointer'}} />
@@ -70,25 +70,27 @@ const App = () => {
           </div>
         </header>
         <Sidebar isOpen={sidebarOpen} />
-        {showCards && (
-          <div>
-            <Link to="/TextDiffViewer" onClick={handleCardClick}>
-              <Card title="TextDiffViewer" description="텍스트 비교 프로그램입니다."/>
-            </Link>
-            <Link to="#" onClick={handleNotOpenCardClick}>
-              <Card title="서비스 2" description="준비중입니다." />
-            </Link>
-            <Modal show={showModal} onClose={handleCloseModal}>
-              <p>서비스 준비 중입니다! &gt;.&lt;</p>
-            </Modal>
-          </div>
-        )}
-        {navigateHome ? <Navigate to="/" replace={true} /> : null}
-        {!navigateHome && (
-          <Routes>
-            <Route path="/TextDiffViewer" element={<TextDiffViewer />} />
-          </Routes>
-        )}
+        <div className={`content-area ${sidebarOpen ? 'content-shifted' : ''}`}> 
+          {showCards && (
+            <div>
+              <Link to="/TextDiffViewer" onClick={handleCardClick}>
+                <Card title="TextDiffViewer" description="텍스트 비교 프로그램입니다."/>
+              </Link>
+              <Link to="#" onClick={handleNotOpenCardClick}>
+                <Card title="서비스 2" description="준비중입니다." />
+              </Link>
+              <Modal show={showModal} onClose={handleCloseModal}>
+                <p>서비스 준비 중입니다! &gt;.&lt;</p>
+              </Modal>
+            </div>
+          )}
+          {navigateHome ? <Navigate to="/" replace={true} /> : null}
+          {!navigateHome && (
+            <Routes>
+              <Route path="/TextDiffViewer" element={<TextDiffViewer />} />
+            </Routes>
+          )}
+        </div>
       </div>
     </Router>
   );

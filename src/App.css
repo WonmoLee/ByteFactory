@@ -39,9 +39,12 @@
 
 .App-header {
   display: flex;
+  position: fixed;
   justify-content: space-between; /* 양 끝에 요소를 배치하고, 중간 요소는 가운데에 위치 */
   align-items: center;
   width: 100%;
+  background-color: #353535;
+  padding: 10px 0px;
 }
 
 .center-container {
@@ -62,7 +65,7 @@
 
 @keyframes slideOut {
   to {
-    transform: translateX(-44%); /* 왼쪽으로 이동하도록 transform을 적용합니다 */
+    transform: translateX(-43.5%); /* 왼쪽으로 이동하도록 transform을 적용합니다 */
   }
 }
 
@@ -72,7 +75,7 @@
 
 @keyframes slideIn {
   from {
-    transform: translateX(-44%);
+    transform: translateX(-43.5%);
   }
   to {
     transform: translateX(0);
@@ -103,9 +106,12 @@
 }
 
 .content-area {
-  transition: margin-left 1s;
+  padding-top: 60px; /* 헤더 높이에 맞춰 상단 여백 추가 */
+  transition: margin-left 1s, width 1s; /* 부드러운 전환 효과 */
+  width: 100%; /* 기본 너비 */
 }
 
 .content-shifted {
-  margin-left: 100px; /* 로고의 가로 길이에 맞춰 조정 */
+  margin-left: 65px; /* 사이드바의 너비만큼 이동 */
+  width: calc(100% - 65px); /* 사이드바 너비만큼 줄인 너비 */
 }

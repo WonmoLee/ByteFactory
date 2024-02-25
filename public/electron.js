@@ -9,8 +9,8 @@ import('electron-is-dev').then((module) => {
   function createWindow() {
     // 브라우저 창 생성
     let win = new BrowserWindow({
-      width: 1600,
-      height: 800,
+      width: 1800,
+      height: 900,
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false,

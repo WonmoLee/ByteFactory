@@ -5,7 +5,7 @@ const Sidebar = ({ isOpen }) => {
   return (
     <div className={`sidebar ${isOpen ? 'open' : ''}`}>
       {/* 아이콘들을 여기에 추가 */}
-      <div className="icon">1</div>
+      <div className="icon">T</div>
       <div className="icon">2</div>
     </div>
   );
