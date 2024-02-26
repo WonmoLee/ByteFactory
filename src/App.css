@@ -36,6 +36,11 @@
   cursor: pointer;
 }
 
+#minimize-button:focus, #close-btn:focus{
+  outline: none;  /* 포커스 테두리 제거 */
+}
+
+
 .logo-slide-out {
   animation: slideOut 1s forwards; /* 애니메이션 지속시간과 방향을 설정합니다 */
 }

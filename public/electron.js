@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 
 let isDev;
@@ -12,14 +12,25 @@ import('electron-is-dev').then((module) => {
       width: 1800,
       height: 900,
       webPreferences: {
+        preload: path.join(__dirname, '../src/preload.js'),
         nodeIntegration: true,
-        contextIsolation: false,
+        contextIsolation: true,
+        enableRemoteModule: true
       },
       resizable: false,
       frame: false
     });
 
     win.setMenu(null);
+
+    ipcMain.on('minimize-event', () => {
+      win.minimize();
+    });
+  
+    // 닫기 이벤트
+    ipcMain.on('close-event', () => {
+      win.close();
+    });
   
     // 개발 환경인지 프로덕션 환경인지에 따라 URL 분기
     if (isDev) {

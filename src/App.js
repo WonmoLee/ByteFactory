@@ -17,6 +17,15 @@ const App = () => {
   const [logoContainerStyle, setLogoContainerStyle] = useState({});
   const [headerTitle, setHeaderTitle] = useState('B Y T E F A C T O R Y');
 
+  const minimize = () => {
+    window.electron.windowControls.minimize();
+  };
+
+  // 닫기 함수
+  const close = () => {
+    window.electron.windowControls.close();
+  };
+
   const handleCardClick = (title) => {
     if (isAnimating) return;
     setIsAnimating(true);
