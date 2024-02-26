@@ -32,8 +32,8 @@ const TextDiffViewer = () => {
     const styles = {
         diffContainer: {
             width: 'auto', // 전체 너비를 사용합니다.
-            minWidth: '1800px', // 최소 너비를 설정합니다 (예: '400px').
-            maxWidth: '1800px', // 최대 너비를 설정합니다 (예: '800px').
+            minWidth: '1700px', // 최소 너비를 설정합니다 (예: '400px').
+            maxWidth: '1700px', // 최대 너비를 설정합니다 (예: '800px').
         },
         line: {
             wordBreak: 'break-all', // 긴 단어가 있을 경우 줄바꿈을 허용합니다.
@@ -58,7 +58,7 @@ const TextDiffViewer = () => {
                         />
                     </div>
                 </div>
-                <div style={{ width: '48%' }}>
+                <div style={{ width: '52%' }}>
                     <h2>수정된 텍스트</h2>
                     <div className="textAreaContainer">
                         <pre ref={newLineNumberRef} className="lineNumbers">
