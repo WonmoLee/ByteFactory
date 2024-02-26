@@ -15,6 +15,8 @@ import('electron-is-dev').then((module) => {
         nodeIntegration: true,
         contextIsolation: false,
       },
+      resizable: false,
+      frame: false
     });
 
     win.setMenu(null);
