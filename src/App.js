@@ -13,21 +13,18 @@ const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [navigateHome, setNavigateHome] = useState(false);
-  const [logoClass, setLogoClass] = useState('');
-  const [textClass, setTextClass] = useState('');
   const [isAnimating, setIsAnimating] = useState(false);
   const [logoContainerStyle, setLogoContainerStyle] = useState({});
+  const [headerTitle, setHeaderTitle] = useState('B Y T E F A C T O R Y');
 
-  const handleCardClick = () => {
+  const handleCardClick = (title) => {
     if (isAnimating) return;
     setIsAnimating(true);
     setShowCards(false);
     setNavigateHome(false);
-    setLogoClass('logo-slide-out');
-    setTextClass('text-fade-out');
     // 로고의 가로 길이만큼 영역을 부여합니다.
-    setLogoContainerStyle({flexGrow: 0, flexShrink: 0, flexBasis: '100px', zIndex: 1000});
     setSidebarOpen(true);
+    setHeaderTitle(title);
 
     setTimeout(() => {
       setIsAnimating(false);
@@ -47,10 +44,9 @@ const App = () => {
     setIsAnimating(true);
     setShowCards(true);
     setNavigateHome(true);
-    setLogoClass('logo-slide-in');
-    setTextClass('text-fade-in');
     setLogoContainerStyle({});
     setSidebarOpen(false);
+    setHeaderTitle('B Y T E F A C T O R Y');
 
     setTimeout(() => {
       setIsAnimating(false);
@@ -61,9 +57,9 @@ const App = () => {
     <Router>
       <div className="App">
         <header className="App-header" style={logoContainerStyle}>
-          <div className={`center-container ${logoClass}`} onClick={handleLogoClick}>
+          <div className={`center-container`} onClick={handleLogoClick}>
             <img src={logo} alt="ByteFactory" style={{cursor: 'pointer'}} />
-            <p className={`${textClass}`} style={{fontWeight: 'bold', cursor: 'pointer'}}>B Y T E F A C T O R Y</p>
+            <p className={`header-text`} style={{fontWeight: 'bold', cursor: 'pointer'}}>{headerTitle}</p>
           </div>
           <div className="right-container">
             <DarkModeToggle />
@@ -73,7 +69,7 @@ const App = () => {
         <div className={`content-area ${sidebarOpen ? 'content-shifted' : ''}`}> 
           {showCards && (
             <div>
-              <Link to="/TextDiffViewer" onClick={handleCardClick}>
+              <Link to="/TextDiffViewer" onClick={() => handleCardClick('TextDiffViewer')}>
                 <Card title="TextDiffViewer" description="텍스트 비교 프로그램입니다."/>
               </Link>
               <Link to="#" onClick={handleNotOpenCardClick}>
