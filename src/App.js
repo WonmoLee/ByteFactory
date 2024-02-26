@@ -62,7 +62,9 @@ const App = () => {
             <p className={`header-text`} style={{fontWeight: 'bold', cursor: 'pointer'}}>{headerTitle}</p>
           </div>
           <div className="right-container">
-            <DarkModeToggle />
+            {/* <DarkModeToggle /> */}
+            <button id="minimize-btn" onClick={minimize}>ㅡ</button>
+            <button id="close-btn" onClick={close}>X</button>
           </div>
         </header>
         <Sidebar isOpen={sidebarOpen} />
