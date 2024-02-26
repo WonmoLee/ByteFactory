@@ -1,24 +1,13 @@
-.card {
-    background-color: #AEC6CF;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin: 32px;
-    padding: 16px;
-    transition: transform 0.3s ease-in-out;
-    will-change: transform; /* 성능 최적화를 위해 속성 추가 */
-    cursor: pointer;
-  }
-  
-  .card:hover {
-    transform: scale(1.02); /* 카드를 약간 확대합니다 */
-    z-index: 10; /* 다른 카드 위로 오도록 z-index를 조정합니다 */
-  }
-  
-  .card-title {
-    margin: 0;
-    color: #333;
-  }
-  
-  .card-description {
-    color: #666;
-  }  
+.card:hover {
+  transform: scale(1.02); /* 카드를 약간 확대합니다 */
+  z-index: 10; /* 다른 카드 위로 오도록 z-index를 조정합니다 */
+}
+
+.card-title {
+  margin: 0;
+  color: #fff;
+}
+
+.card-description {
+  color: #fff;
+}  

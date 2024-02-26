@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-ro
 import Card from './components/Card';
 import Sidebar from './components/Sidebar'; // 사이드바 컴포넌트 import
 import TextDiffViewer from './pages/TextDiffViewer';
-import DarkModeToggle from './components/DarkModeToggle';
+//import DarkModeToggle from './components/DarkModeToggle';
 import Modal from './components/Modal';
 import './App.css';
 import logo from './assets/imgs/logo.png';
@@ -81,10 +81,10 @@ const App = () => {
           {showCards && (
             <div>
               <Link to="/TextDiffViewer" onClick={() => handleCardClick('TextDiffViewer')}>
-                <Card title="TextDiffViewer" description="텍스트 비교 프로그램입니다."/>
+                <Card No="1" title="TextDiffViewer" description="텍스트 비교 프로그램입니다."/>
               </Link>
               <Link to="#" onClick={handleNotOpenCardClick}>
-                <Card title="서비스 2" description="준비중입니다." />
+                <Card No="2" title="서비스 2" description="준비중입니다." />
               </Link>
               <Modal show={showModal} onClose={handleCloseModal}>
                 <p>서비스 준비 중입니다! &gt;.&lt;</p>
