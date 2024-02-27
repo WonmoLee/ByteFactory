@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 function ClipboardMonitor() {
   const [clipboardContents, setClipboardContents] = useState([]);
+  const [nextId, setNextId] = useState(0); // 고유 ID 생성을 위한 상태
 
   useEffect(() => {
     const handleCopy = (event) => {
@@ -11,11 +12,11 @@ function ClipboardMonitor() {
 
         event.clipboardData.setData('text/plain', text);
         event.preventDefault(); // 기본 클립보드 동작을 막아 중복을 방지
-        // 새로운 항목 추가 시 기본 타이틀을 임시 타이틀로 설정하고 편집 가능 상태로 지정
         setClipboardContents((prevContents) => [
           ...prevContents,
-          { title: 'Untitle', content: text, isEditing: true },
+          { id: nextId, title: 'Untitle', content: text, isEditing: true },
         ]);
+        setNextId(nextId + 1);
       }
     };
 
@@ -24,7 +25,7 @@ function ClipboardMonitor() {
     return () => {
       document.removeEventListener('copy', handleCopy);
     };
-  }, []);
+  }, [nextId]);
 
   const handleTitleChange = (index, newTitle) => {
     setClipboardContents((prevContents) =>
@@ -45,25 +46,34 @@ function ClipboardMonitor() {
     }
   };
 
+  const clearClipboard = () => {
+    setClipboardContents([]); // 클립보드 내용을 초기화
+  };
+
+  const removeItem = (id) => {
+    setClipboardContents(clipboardContents.filter(item => item.id !== id));
+  };
+
   return (
     <div style={{ display: 'flex', height: '10vh' }}>
       <div style={{
-        width: '55%',
+        width: '40%',
         height: '90vh', // 전체 뷰포트 높이를 차지하도록 설정
         position: 'fixed', // 좌측 영역을 고정
       }}>
         <h2>복사 작업할 텍스트</h2>
-        <textarea style={{ width: '90%', height: '90%' }} placeholder="Copy text from here..."></textarea>
+        <textarea style={{ width: '100%', height: '90%' }} placeholder="Copy text from here..."></textarea>
       </div>
       <div style={{
         width: '45%',
-        marginLeft: '60%', // 좌측 영역의 너비만큼 마진을 줘서 우측 영역이 겹치지 않게 함
+        marginLeft: '50%', // 좌측 영역의 너비만큼 마진을 줘서 우측 영역이 겹치지 않게 함
         height: '800px' // 전체 뷰포트 높이를 차지하도록 설정
       }}>
         <h2>Clipboard Contents</h2>
+        <button onClick={clearClipboard} style={{ marginBottom: '20px' }}>초기화</button>
         <ul>
           {clipboardContents.map((item, index) => (
-            <li key={index} style={{ marginBottom: '10px', wordWrap: 'break-word', overflowWrap: 'break-word' }}>
+            <li key={item.id} style={{ marginBottom: '10px', wordWrap: 'break-word', overflowWrap: 'break-word' }}>
               {item.isEditing ? (
                 <input
                   type="text"
@@ -75,7 +85,7 @@ function ClipboardMonitor() {
                 />
               ) : (
                 <div onDoubleClick={() => toggleEditing(index, true)}>
-                  <strong>{item.title}</strong>
+                  <strong>{item.title}<button style={{ marginLeft: '50px'}} onClick={() => removeItem(item.id)}>X</button></strong>
                 </div>
               )}
               <br/>
