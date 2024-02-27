@@ -25,7 +25,8 @@
 }
 
 .sidebar-item:hover {
-  background-color: #363030; /* 호버 색상 변경 */
+  background-color: #221d1d; /* 호버 색상 변경 */
+  cursor: pointer;
 }
 
 /* 텍스트 레이블이 보이도록 설정 */
