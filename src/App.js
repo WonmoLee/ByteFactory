@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import Card from './components/Card';
 import Sidebar from './components/Sidebar'; // 사이드바 컴포넌트 import
 import TextDiffViewer from './pages/TextDiffViewer';

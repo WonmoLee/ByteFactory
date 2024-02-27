@@ -12,7 +12,7 @@ import('electron-is-dev').then((module) => {
       width: 1800,
       height: 900,
       webPreferences: {
-        preload: path.join(__dirname, '../src/preload.js'),
+        preload: path.join(__dirname, '../build/preload.js'),
         nodeIntegration: true,
         contextIsolation: true,
         enableRemoteModule: true
