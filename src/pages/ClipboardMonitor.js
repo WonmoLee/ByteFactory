@@ -46,12 +46,20 @@ function ClipboardMonitor() {
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-      <div style={{ width: '60%', height: '700px' }}>
+    <div style={{ display: 'flex', height: '10vh' }}>
+      <div style={{
+        width: '55%',
+        height: '90vh', // 전체 뷰포트 높이를 차지하도록 설정
+        position: 'fixed', // 좌측 영역을 고정
+      }}>
         <h2>복사 작업할 텍스트</h2>
-        <textarea style={{ width: '90%', height: '100%' }} placeholder="Copy text from here..."></textarea>
+        <textarea style={{ width: '90%', height: '90%' }} placeholder="Copy text from here..."></textarea>
       </div>
-      <div style={{ width: '45%' }}>
+      <div style={{
+        width: '45%',
+        marginLeft: '60%', // 좌측 영역의 너비만큼 마진을 줘서 우측 영역이 겹치지 않게 함
+        height: '800px' // 전체 뷰포트 높이를 차지하도록 설정
+      }}>
         <h2>Clipboard Contents</h2>
         <ul>
           {clipboardContents.map((item, index) => (
