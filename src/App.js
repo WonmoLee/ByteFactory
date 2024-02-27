@@ -38,7 +38,7 @@ const App = () => {
 
     setTimeout(() => {
       setIsAnimating(false);
-    }, 1000);
+    }, 300);
   };
 
   // const handleNotOpenCardClick = () => {
@@ -60,7 +60,7 @@ const App = () => {
 
     setTimeout(() => {
       setIsAnimating(false);
-    }, 1000);
+    }, 300);
   };
 
   return (

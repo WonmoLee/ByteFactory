@@ -42,7 +42,7 @@
 
 
 .logo-slide-out {
-  animation: slideOut 1s forwards; /* 애니메이션 지속시간과 방향을 설정합니다 */
+  animation: slideOut 0.3s forwards; /* 애니메이션 지속시간과 방향을 설정합니다 */
 }
 
 @keyframes slideOut {
@@ -65,7 +65,7 @@
 }
 
 .text-fade-out {
-  animation: fadeOutText 1s forwards;
+  animation: fadeOutText 0.3s forwards;
 }
 
 @keyframes fadeOutText {
@@ -75,7 +75,7 @@
 }
 
 .text-fade-in {
-  animation: fadeInText 1s forwards;
+  animation: fadeInText 0.3s forwards;
 }
 
 @keyframes fadeInText {
@@ -89,12 +89,12 @@
 
 .content-area {
   padding-top: 60px; /* 헤더 높이에 맞춰 상단 여백 추가 */
-  transition: margin-left 1s, width 1s; /* 부드러운 전환 효과 */
+  transition: margin-left 0.3s, width 0.3s; /* 부드러운 전환 효과 */
   width: 100%; /* 기본 너비 */
 }
 
 .content-shifted {
-  margin-left: 65px; /* 사이드바의 너비만큼 이동 */
+  margin-left: 210px; /* 사이드바의 너비만큼 이동 */
   width: calc(100% - 65px); /* 사이드바 너비만큼 줄인 너비 */
 }
 

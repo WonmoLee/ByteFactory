@@ -1,19 +1,25 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../assets/Sidebar.css'; // 사이드바 전용 CSS 파일
+import '../assets/Sidebar.css'; // 사이드바 CSS 스타일을 여기에 정의
 
-const Sidebar = ({ isOpen, onIconClick }) => {
-
+const Sidebar = ({ isOpen }) => {
   const navigate = useNavigate();
 
-  const handleIconClick = (path) => {
+  const handleItemClick = (path) => {
     navigate(path);
   };
 
   return (
     <div className={`sidebar ${isOpen ? 'open' : ''}`}>
-      <div className="icon" onClick={() => handleIconClick('/TextDiffViewer')}>T</div>
-      <div className="icon" onClick={() => handleIconClick('/ClipboardMonitor')}>2</div>
+      <div className="sidebar-item" onClick={() => handleItemClick('/TextDiffViewer')}>
+        <i className="icon-home"></i> {/* 이곳에 홈 아이콘 SVG 또는 Font Awesome 아이콘을 사용할 수 있습니다 */}
+        <span>텍스트 비교</span>
+      </div>
+      <div className="sidebar-item" onClick={() => handleItemClick('/ClipboardMonitor')}>
+        <i className="icon-messages"></i> {/* 이곳에 메시지 아이콘 SVG 또는 Font Awesome 아이콘을 사용할 수 있습니다 */}
+        <span>간편 복사</span>
+      </div>
+      {/* 추가적인 사이드바 아이템들을 여기에 구성할 수 있습니다 */}
     </div>
   );
 };
