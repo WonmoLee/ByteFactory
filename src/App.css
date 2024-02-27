@@ -95,7 +95,7 @@
 
 .content-shifted {
   margin-left: 210px; /* 사이드바의 너비만큼 이동 */
-  width: calc(100% - 65px); /* 사이드바 너비만큼 줄인 너비 */
+  width: calc(100% - 210px); /* 사이드바 너비만큼 줄인 너비 */
 }
 
 .header-text {

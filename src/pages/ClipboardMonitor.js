@@ -52,7 +52,7 @@ function ClipboardMonitor() {
         <textarea style={{ width: '90%', height: '100%' }} placeholder="Copy text from here..."></textarea>
       </div>
       <div style={{ width: '45%' }}>
-        <h2>Clipboard Contents:</h2>
+        <h2>Clipboard Contents</h2>
         <ul>
           {clipboardContents.map((item, index) => (
             <li key={index} style={{ marginBottom: '10px', wordWrap: 'break-word', overflowWrap: 'break-word' }}>

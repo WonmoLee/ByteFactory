@@ -43,7 +43,7 @@ const TextDiffViewer = () => {
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-                <div style={{ width: '35%' }}>
+                <div style={{ width: '40%' }}>
                     <h2>원본 텍스트</h2>
                     <div className="textAreaContainer">
                         <pre ref={oldLineNumberRef} className="lineNumbers">
@@ -58,7 +58,7 @@ const TextDiffViewer = () => {
                         />
                     </div>
                 </div>
-                <div style={{ width: '56%' }}>
+                <div style={{ width: '52%' }}>
                     <h2>수정된 텍스트</h2>
                     <div className="textAreaContainer">
                         <pre ref={newLineNumberRef} className="lineNumbers">
