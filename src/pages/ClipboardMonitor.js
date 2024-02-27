@@ -71,7 +71,7 @@ function ClipboardMonitor() {
                 </div>
               )}
               <br/>
-              <div style={{ marginLeft: '20px' }}>{item.content}</div>
+              <div style={{ marginLeft: '20px', marginRight:'20px' }}>{item.content}</div>
               <br/>
             </li>
           ))}
