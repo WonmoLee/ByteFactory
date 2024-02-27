@@ -3,6 +3,7 @@ import { HashRouter as Router, Routes, Route, Link, Navigate } from 'react-route
 import Card from './components/Card';
 import Sidebar from './components/Sidebar'; // 사이드바 컴포넌트 import
 import TextDiffViewer from './pages/TextDiffViewer';
+import ClipboardMonitor from './pages/ClipboardMonitor';
 //import DarkModeToggle from './components/DarkModeToggle';
 import Modal from './components/Modal';
 import './App.css';
@@ -40,9 +41,9 @@ const App = () => {
     }, 1000);
   };
 
-  const handleNotOpenCardClick = () => {
-    setShowModal(true);
-  };
+  // const handleNotOpenCardClick = () => {
+  //   setShowModal(true);
+  // };
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -81,10 +82,10 @@ const App = () => {
           {showCards && (
             <div>
               <Link to="/TextDiffViewer" onClick={() => handleCardClick('TextDiffViewer')}>
-                <Card No="1" title="TextDiffViewer" description="텍스트 비교 프로그램입니다."/>
+                <Card No="1" title="TextDiffViewer" description="텍스트를 비교하는 프로그램입니다."/>
               </Link>
-              <Link to="#" onClick={handleNotOpenCardClick}>
-                <Card No="2" title="서비스 2" description="준비중입니다." />
+              <Link to="/ClipboardMonitor" onClick={() => handleCardClick('ClipboardMonitor')}>
+                <Card No="2" title="ClipboardMonitor" description="주어진 텍스트에 대한 클립보드를 모니터링하는 프로그램입니다." />
               </Link>
               <Modal show={showModal} onClose={handleCloseModal}>
                 <p>서비스 준비 중입니다! &gt;.&lt;</p>
@@ -95,6 +96,7 @@ const App = () => {
           {!navigateHome && (
             <Routes>
               <Route path="/TextDiffViewer" element={<TextDiffViewer />} />
+              <Route path="/ClipboardMonitor" element={<ClipboardMonitor />} />
             </Routes>
           )}
         </div>
