@@ -77,7 +77,7 @@ const App = () => {
             <button id="close-btn" onClick={close}>X</button>
           </div>
         </header>
-        <Sidebar isOpen={sidebarOpen} />
+        <Sidebar isOpen={sidebarOpen}/>
         <div className={`content-area ${sidebarOpen ? 'content-shifted' : ''}`}> 
           {showCards && (
             <div>
