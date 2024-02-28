@@ -73,7 +73,8 @@ function ClipboardMonitor() {
         <h2>Clipboard Contents</h2>
         <button onClick={clearClipboard} style={{ marginBottom: '20px' }}>초기화</button>
         <ul>
-          {clipboardContents.map((item, index) => (
+        {
+          clipboardContents.map((item, index) => (
             <li key={item.id} style={{ marginBottom: '10px', wordWrap: 'break-word', overflowWrap: 'break-word' }}>
               {item.isEditing ? (
                 <input
@@ -90,10 +91,12 @@ function ClipboardMonitor() {
                 </div>
               )}
               <br/>
-              <div style={{ marginLeft: '20px', marginRight:'20px' }}>{item.content}</div>
+              {/* 변경된 부분: item.content를 <pre> 태그로 래핑하여 코드 형식 유지 */}
+              <pre style={{ marginLeft: '20px', marginRight: '20px', whiteSpace: 'pre-wrap' }}>{item.content}</pre>
               <br/>
             </li>
-          ))}
+          ))
+        }
         </ul>
       </div>
     </div>
