@@ -5,25 +5,26 @@ function ClipboardMonitor() {
   const [nextId, setNextId] = useState(0); // 고유 ID 생성을 위한 상태
 
   useEffect(() => {
-    const handleCopy = (event) => {
-      const selection = document.getSelection();
-      if (selection.toString().length > 0) {
-        const text = selection.toString();
+    const handleKeyDown = (event) => {
+      if (event.ctrlKey && event.shiftKey && event.code === 'KeyC') {
+        const selection = document.getSelection();
+        if (selection.toString().length > 0) {
+          const text = selection.toString();
 
-        event.clipboardData.setData('text/plain', text);
-        event.preventDefault(); // 기본 클립보드 동작을 막아 중복을 방지
-        setClipboardContents((prevContents) => [
-          ...prevContents,
-          { id: nextId, title: 'Untitle', content: text, isEditing: true },
-        ]);
-        setNextId(nextId + 1);
+          // Ctrl + Shift + C를 눌렀을 때의 동작 구현
+          setClipboardContents((prevContents) => [
+            ...prevContents,
+            { id: nextId, title: 'Untitled', content: text, isEditing: true },
+          ]);
+          setNextId(nextId + 1);
+        }
       }
     };
 
-    document.addEventListener('copy', handleCopy);
+    document.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.removeEventListener('copy', handleCopy);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [nextId]);
 
