@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../assets/TextFinder.css'; // 애니메이션을 위한 CSS
 
-function TextFinder({ show }) {
+function TextFinder({ show, onSearch }) {
   const [isVisible, setIsVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -28,6 +28,11 @@ function TextFinder({ show }) {
       return () => clearTimeout(timer);
     }
   }, [show]);
+
+  // TextFinder 컴포넌트 내에서
+  useEffect(() => {
+    onSearch(searchQuery); // 검색 쿼리 변경 시 부모에 전달
+  }, [searchQuery, onSearch]);
 
   return (
     <div

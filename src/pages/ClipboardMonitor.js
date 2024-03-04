@@ -6,6 +6,8 @@ function ClipboardMonitor() {
   const [clipboardContents, setClipboardContents] = useState([]);
   const [nextId, setNextId] = useState(0); // 고유 ID 생성을 위한 상태
   const [showTextFinder, setShowTextFinder] = useState(false);
+  // ClipboardMonitor 컴포넌트 내에서
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -63,6 +65,19 @@ function ClipboardMonitor() {
     setClipboardContents(clipboardContents.filter(item => item.id !== id));
   };
 
+  // 검색 쿼리와 일치하는 부분을 하이라이트하는 함수
+const highlightText = (text, query) => {
+  if (!query) return text;
+  const parts = text.split(new RegExp(`(${query})`, 'gi'));
+  return parts.map((part, index) =>
+    part.toLowerCase() === query.toLowerCase() ? (
+      <span key={index} style={{ backgroundColor: 'yellow' }}>{part}</span>
+    ) : (
+      part
+    )
+  );
+};
+
   return (
     <div style={{ display: 'flex', height: '10vh' }}>
       <div style={{
@@ -80,7 +95,7 @@ function ClipboardMonitor() {
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 1 }}>
           <h2>Clipboard Contents</h2>
-          <TextFinder show={showTextFinder} />
+          <TextFinder show={showTextFinder} onSearch={setSearchQuery} />
         </div>
         <button onClick={clearClipboard} style={{ marginBottom: '20px' }}>초기화</button>
         <ul>
@@ -103,7 +118,9 @@ function ClipboardMonitor() {
               )}
               <br/>
               {/* 변경된 부분: item.content를 <pre> 태그로 래핑하여 코드 형식 유지 */}
-              <pre style={{ marginLeft: '20px', marginRight: '20px', whiteSpace: 'pre-wrap' }}>{item.content}</pre>
+              <pre style={{ marginLeft: '20px', marginRight: '20px', whiteSpace: 'pre-wrap' }}>
+                {highlightText(item.content, searchQuery)}
+              </pre>
               <br/>
             </li>
           ))
