@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import TextFinder from '../components/TextFinder'; // TextFinder 컴포넌트 import
+import EditableDiv from '../components/EditableDiv'; // TextFinder 컴포넌트 import
 
 function ClipboardMonitor() {
   const [clipboardContents, setClipboardContents] = useState([]);
@@ -70,7 +71,7 @@ function ClipboardMonitor() {
         position: 'fixed', // 좌측 영역을 고정
       }}>
         <h2>복사 작업할 텍스트</h2>
-        <textarea style={{ width: '100%', height: '90%' }} placeholder="Copy text from here..."></textarea>
+        <EditableDiv/>
       </div>
       <div style={{
         width: '45%',
