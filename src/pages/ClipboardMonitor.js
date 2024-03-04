@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import TextFinder from '../components/TextFinder';
 
 function ClipboardMonitor() {
   const [clipboardContents, setClipboardContents] = useState([]);
   const [nextId, setNextId] = useState(0); // 고유 ID 생성을 위한 상태
-  const [showTextFinder, setShowTextFinder] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -21,11 +18,6 @@ function ClipboardMonitor() {
           ]);
           setNextId(nextId + 1);
         }
-      }
-
-      if (event.ctrlKey && event.key === 'f') {
-        event.preventDefault(); // 브라우저 기본 동작 방지
-        setShowTextFinder(true); // TextFinder 표시
       }
     };
 
@@ -63,20 +55,6 @@ function ClipboardMonitor() {
     setClipboardContents(clipboardContents.filter(item => item.id !== id));
   };
 
-  const handleSearch = (term) => {
-    setSearchTerm(term);
-  };
-  
-  // 텍스트 강조 함수
-  const highlightText = (content) => {
-    if (!searchTerm) return content;
-  
-    const parts = content.split(new RegExp(`(${searchTerm})`, 'gi'));
-    return parts.map((part, index) =>
-      part.toLowerCase() === searchTerm.toLowerCase() ? <mark key={index}>{part}</mark> : part
-    );
-  };
-
   return (
     <div style={{ display: 'flex', height: '10vh' }}>
       <div style={{
@@ -94,8 +72,6 @@ function ClipboardMonitor() {
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h2>Clipboard Contents</h2>
-          {/* TextFinder 컴포넌트를 여기로 이동 */}
-          <TextFinder onSearch={handleSearch} />
         </div>
         <button onClick={clearClipboard} style={{ marginBottom: '20px' }}>초기화</button>
         <ul>
@@ -118,7 +94,7 @@ function ClipboardMonitor() {
               )}
               <br/>
               {/* 변경된 부분: item.content를 <pre> 태그로 래핑하여 코드 형식 유지 */}
-              <pre style={{ marginLeft: '20px', marginRight: '20px', whiteSpace: 'pre-wrap' }}>{highlightText(item.content)}</pre>
+              <pre style={{ marginLeft: '20px', marginRight: '20px', whiteSpace: 'pre-wrap' }}>{item.content}</pre>
               <br/>
             </li>
           ))
