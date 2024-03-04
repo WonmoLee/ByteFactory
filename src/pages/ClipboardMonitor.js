@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import TextFinder from '../components/TextFinder'; // TextFinder 컴포넌트 import
 
 function ClipboardMonitor() {
   const [clipboardContents, setClipboardContents] = useState([]);
   const [nextId, setNextId] = useState(0); // 고유 ID 생성을 위한 상태
+  const [showTextFinder, setShowTextFinder] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -19,6 +21,11 @@ function ClipboardMonitor() {
           setNextId(nextId + 1);
         }
       }
+
+      if (event.ctrlKey && event.key === 'f') {
+        event.preventDefault(); // 기본 브라우저 검색 기능 방지
+        setShowTextFinder(!showTextFinder); // TextFinder 표시/숨김 토글
+      }
     };
 
     document.addEventListener('keydown', handleKeyDown);
@@ -26,7 +33,7 @@ function ClipboardMonitor() {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [nextId]);
+  }, [nextId, showTextFinder]);
 
   const handleTitleChange = (index, newTitle) => {
     setClipboardContents((prevContents) =>
@@ -70,8 +77,9 @@ function ClipboardMonitor() {
         marginLeft: '50%', // 좌측 영역의 너비만큼 마진을 줘서 우측 영역이 겹치지 않게 함
         height: '800px' // 전체 뷰포트 높이를 차지하도록 설정
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 1 }}>
           <h2>Clipboard Contents</h2>
+          <TextFinder show={showTextFinder} />
         </div>
         <button onClick={clearClipboard} style={{ marginBottom: '20px' }}>초기화</button>
         <ul>

@@ -1,23 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import '../assets/TextFinder.css'; // 애니메이션을 위한 CSS
 
-function TextFinder({ onSearch }) {
-  const [searchTerm, setSearchTerm] = useState('');
+function TextFinder({ show }) {
+  const [isVisible, setIsVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const handleChange = (e) => {
-    const newSearchTerm = e.target.value;
-    setSearchTerm(newSearchTerm);
-    onSearch(newSearchTerm); // 입력할 때마다 상위 컴포넌트에 검색어 전달
-  };
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.ctrlKey && event.key === 'f') {
+        event.preventDefault(); // 기본 브라우저 검색 기능 방지
+        setIsVisible(!isVisible); // TextFinder 표시/숨김 토글
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isVisible]);
+
+  useEffect(() => {
+    if (!show) {
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+      }, 300); // CSS 애니메이션 지속 시간과 일치해야 합니다.
+      return () => clearTimeout(timer);
+    }
+  }, [show]);
 
   return (
-    <form onSubmit={(e) => e.preventDefault()}>
+    <div
+      className={`text-finder ${show && isVisible ? 'show slideDown' : 'slideUp'}`}
+      onAnimationEnd={() => {
+        if (!show) setIsVisible(false);
+      }}
+      style={{ display: isVisible ? 'block' : 'none' }}
+    >
       <input
         type="text"
-        value={searchTerm}
-        onChange={handleChange}
-        placeholder="Search text..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        placeholder="Search for text..."
       />
-    </form>
+    </div>
   );
 }
 
