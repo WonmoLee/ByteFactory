@@ -86,7 +86,7 @@ const highlightText = (text, query) => {
         position: 'fixed', // 좌측 영역을 고정
       }}>
         <h2>복사 작업할 텍스트</h2>
-        <EditableDiv/>
+        <EditableDiv searchQuery={searchQuery}/>
       </div>
       <div style={{
         width: '45%',

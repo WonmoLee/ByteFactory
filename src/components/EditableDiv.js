@@ -1,26 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import DOMPurify from 'dompurify';
 
-function EditableDiv() {
-  const [content, setContent] = useState("이곳의 텍스트를 편집해보세요.");
-  const [showSearch, setShowSearch] = useState(false); // 검색 UI 표시 여부
-  const [searchQuery, setSearchQuery] = useState(''); // 검색 쿼리
+function EditableDiv({ searchQuery }) {
+  const [content, setContent] = useState("");
   const contentRef = useRef(null);
 
   useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (event.ctrlKey && event.key === 'f') {
-        event.preventDefault();
-        setShowSearch(!showSearch); // 검색 UI 토글
-      }
-      // 여기에 Ctrl+Z 등 다른 단축키 처리 로직을 추가할 수 있습니다.
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [showSearch]);
+    if (!searchQuery) {
+      // 검색 쿼리가 없으면 원본 내용으로 복원
+      contentRef.current.innerHTML = content;
+    } else {
+      // 검색 쿼리의 특수 문자를 이스케이프 처리
+      const escapedSearchQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`(${escapedSearchQuery})`, 'gi');
+      const highlightedHtml = content.replace(regex, `<mark style="background-color: yellow;">$1</mark>`);
+      contentRef.current.innerHTML = highlightedHtml;
+    }
+  }, [searchQuery, content]);  
 
   const handleBlur = (event) => {
     const cleanHtml = DOMPurify.sanitize(event.target.innerHTML);
@@ -34,14 +30,7 @@ function EditableDiv() {
       FORBID_ATTR: ['style', 'class'],
       FORBID_TAGS: ['script', 'iframe'],
     });
-    document.execCommand('insertHTML', false, cleanHtml);
-  };
-
-  // 검색 쿼리 변경 처리
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-    // 여기에 검색 쿼리에 따른 검색 로직을 구현할 수 있습니다.
-    // 예: content에서 searchQuery를 검색하고 결과를 하이라이트하는 로직
+    document.execCommand('insertHTML', false, cleanHtml.trim());
   };
 
   return (
@@ -61,17 +50,6 @@ function EditableDiv() {
         }}
         dangerouslySetInnerHTML={{ __html: content }}
       />
-      {showSearch && (
-        <div className="text-finder">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={handleSearchChange}
-            placeholder="Search for text..."
-          />
-          {/* 검색 결과 및 네비게이션 UI를 여기에 추가할 수 있습니다. */}
-        </div>
-      )}
     </div>
   );
 }
