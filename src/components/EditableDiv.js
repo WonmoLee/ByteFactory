@@ -1,56 +1,38 @@
-import React, { useState, useEffect, useRef } from 'react';
-import DOMPurify from 'dompurify';
+import React, { useState } from 'react';
+import DOMPurify from 'dompurify'; // DOMPurify 라이브러리를 설치해야 합니다.
 
-function EditableDiv({ searchQuery }) {
-  const [content, setContent] = useState("");
-  const contentRef = useRef(null);
-
-  useEffect(() => {
-    if (!searchQuery) {
-      // 검색 쿼리가 없으면 원본 내용으로 복원
-      contentRef.current.innerHTML = content;
-    } else {
-      // 검색 쿼리의 특수 문자를 이스케이프 처리
-      const escapedSearchQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const regex = new RegExp(`(${escapedSearchQuery})`, 'gi');
-      const highlightedHtml = content.replace(regex, `<mark style="background-color: yellow;">$1</mark>`);
-      contentRef.current.innerHTML = highlightedHtml;
-    }
-  }, [searchQuery, content]);  
+function EditableDiv() {
+  const [content, setContent] = useState("이곳의 텍스트를 편집해보세요.");
 
   const handleBlur = (event) => {
-    const cleanHtml = DOMPurify.sanitize(event.target.innerHTML);
-    setContent(cleanHtml);
+    // innerHTML을 사용하여 상태 업데이트
+    setContent(event.target.innerHTML);
   };
 
   const handlePaste = (event) => {
     event.preventDefault();
     const html = event.clipboardData.getData('text/html') || event.clipboardData.getData('text/plain');
-    const cleanHtml = DOMPurify.sanitize(html, {
-      FORBID_ATTR: ['style', 'class'],
-      FORBID_TAGS: ['script', 'iframe'],
-    });
-    document.execCommand('insertHTML', false, cleanHtml.trim());
+    // 붙여넣기된 콘텐츠를 살균
+    const cleanHtml = DOMPurify.sanitize(html);
+    // 살균된 HTML을 상태로 설정
+    setContent(cleanHtml);
   };
 
   return (
-    <div>
-      <div
-        ref={contentRef}
-        contentEditable={true}
-        onBlur={handleBlur}
-        onPaste={handlePaste}
-        suppressContentEditableWarning={true}
-        style={{
-          width: '100%',
-          height: '80vh',
-          border: '1px solid #ccc',
-          padding: '10px',
-          overflow: 'auto'
-        }}
-        dangerouslySetInnerHTML={{ __html: content }}
-      />
-    </div>
+    <div
+      contentEditable={true}
+      onBlur={handleBlur}
+      onPaste={handlePaste}
+      suppressContentEditableWarning={true}
+      style={{
+        width: '100%',
+        height: '80vh',
+        border: '1px solid #ccc',
+        padding: '10px',
+        overflow: 'auto'
+      }}
+      dangerouslySetInnerHTML={{ __html: content }} // 상태를 사용하여 내용을 렌더링
+    />
   );
 }
 
