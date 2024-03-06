@@ -1,38 +1,71 @@
-import React, { useState } from 'react';
-import DOMPurify from 'dompurify'; // DOMPurify 라이브러리를 설치해야 합니다.
+import React, { useState, useEffect, useRef } from 'react';
+import DOMPurify from 'dompurify';
+import TextFinder from './TextFinder';
 
 function EditableDiv() {
   const [content, setContent] = useState("이곳의 텍스트를 편집해보세요.");
+  const [showSearch, setShowSearch] = useState(false);
+  const contentRef = useRef(null);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.ctrlKey && event.key === 'f') {
+        event.preventDefault();
+        setShowSearch(!showSearch);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showSearch]);
 
   const handleBlur = (event) => {
-    // innerHTML을 사용하여 상태 업데이트
     setContent(event.target.innerHTML);
   };
 
+  useEffect(() => {
+    contentRef.current.innerHTML = content;
+  }, [content]);
+
   const handlePaste = (event) => {
     event.preventDefault();
-    const html = event.clipboardData.getData('text/html') || event.clipboardData.getData('text/plain');
-    // 붙여넣기된 콘텐츠를 살균
-    const cleanHtml = DOMPurify.sanitize(html);
-    // 살균된 HTML을 상태로 설정
-    setContent(cleanHtml);
+    const text = event.clipboardData.getData('text/plain');
+    const cleanText = DOMPurify.sanitize(text);
+    document.execCommand('insertText', false, cleanText);
+  };
+
+  const handleSearchChange = (query) => {
+    if (!query) {
+      contentRef.current.innerHTML = content;
+    } else {
+      const regex = new RegExp(`(${query})`, 'gi');
+      const highlightedContent = content.replace(regex, '<span style="background-color: yellow;">$1</span>');
+      contentRef.current.innerHTML = highlightedContent;
+    }
   };
 
   return (
-    <div
-      contentEditable={true}
-      onBlur={handleBlur}
-      onPaste={handlePaste}
-      suppressContentEditableWarning={true}
-      style={{
-        width: '100%',
-        height: '80vh',
-        border: '1px solid #ccc',
-        padding: '10px',
-        overflow: 'auto'
-      }}
-      dangerouslySetInnerHTML={{ __html: content }} // 상태를 사용하여 내용을 렌더링
-    />
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}> {/* EditableDiv에 대한 상대적 위치 지정 */}
+      <div
+        ref={contentRef}
+        contentEditable={true}
+        onBlur={handleBlur}
+        onPaste={handlePaste}
+        suppressContentEditableWarning={true}
+        style={{
+          width: '100%',
+          height: '80vh',
+          border: '1px solid #ccc',
+          padding: '10px',
+          overflow: 'auto'
+        }}
+      />
+      <div className="text-finder-container"> {/* TextFinder 컴포넌트를 포함하는 div에 클래스 적용 */}
+        <TextFinder show={showSearch} onSearch={handleSearchChange} />
+      </div>
+    </div>
   );
 }
 
