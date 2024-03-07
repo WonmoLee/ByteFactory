@@ -30,7 +30,7 @@ function ClipboardMonitor() {
 
       if (!isFocused && event.ctrlKey && event.key === 'f') {
         event.preventDefault(); // 기본 브라우저 검색 기능 방지
-        setShowTextFinder(!showTextFinder); // TextFinder 표시/숨김 토글
+        setShowTextFinder(true); // TextFinder 표시/숨김 토글
       }
     };
 

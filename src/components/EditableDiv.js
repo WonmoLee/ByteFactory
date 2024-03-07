@@ -12,7 +12,7 @@ function EditableDiv({ onFocusChange }) {
     const handleKeyDown = (event) => {
       if (isFocused && event.ctrlKey && event.key === 'f') {
         event.preventDefault();
-        setShowSearch(!showSearch);
+        setShowSearch(true);
       }
     };
 
@@ -20,7 +20,7 @@ function EditableDiv({ onFocusChange }) {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [showSearch, isFocused]);
+  }, [isFocused]);
 
   const handleBlur = (event) => {
     setContent(event.target.innerHTML);

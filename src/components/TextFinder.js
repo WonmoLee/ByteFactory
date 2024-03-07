@@ -11,7 +11,7 @@ function TextFinder({ show, onSearch }) {
     const handleKeyDown = (event) => {
       if (event.ctrlKey && event.key === 'f') {
         event.preventDefault(); // 브라우저의 기본 검색 기능 방지
-        setIsVisible(!isVisible); // 검색 입력창의 표시 여부 토글
+        setIsVisible(true); // 검색 입력창의 표시 여부 토글
       }
     };
 
@@ -41,6 +41,10 @@ function TextFinder({ show, onSearch }) {
     onSearch(searchQuery);
   }, [searchQuery, onSearch]);
 
+  const handleClose = () => {
+    setIsVisible(false); // 검색창을 숨김
+  };
+
   return (
     <div
       className={`text-finder ${show && isVisible ? 'show slideDown' : 'slideUp'}`}
@@ -55,6 +59,7 @@ function TextFinder({ show, onSearch }) {
         onChange={(e) => setSearchQuery(e.target.value)} // 입력 필드 값 변경 시 searchQuery 상태 업데이트
         placeholder="Search for text..."
       />
+      <button onClick={handleClose} style={{ marginLeft: '10px' }}>X</button>
     </div>
   );
 }

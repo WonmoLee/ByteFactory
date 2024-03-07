@@ -29,7 +29,8 @@
   
   .text-finder-container {
     position: absolute;
+    width: 100%;
     top: -10px;
-    right: 10px;
+    right: 20px;
     z-index: 1000; /* 상위에 보이도록 함 */
   }
