@@ -2,14 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import DOMPurify from 'dompurify';
 import TextFinder from './TextFinder';
 
-function EditableDiv() {
+function EditableDiv({ onFocusChange }) {
   const [content, setContent] = useState("이곳의 텍스트를 편집해보세요.");
   const [showSearch, setShowSearch] = useState(false);
+  const [isFocused, setIsFocused] = useState(false); // 포커스 상태 추가
   const contentRef = useRef(null);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.ctrlKey && event.key === 'f') {
+      if (isFocused && event.ctrlKey && event.key === 'f') {
         event.preventDefault();
         setShowSearch(!showSearch);
       }
@@ -19,7 +20,7 @@ function EditableDiv() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [showSearch]);
+  }, [showSearch, isFocused]);
 
   const handleBlur = (event) => {
     setContent(event.target.innerHTML);
@@ -28,6 +29,26 @@ function EditableDiv() {
   useEffect(() => {
     contentRef.current.innerHTML = content;
   }, [content]);
+
+  useEffect(() => {
+    const handleFocus = () => {
+      setIsFocused(true);
+      onFocusChange(true);
+    };
+    const handleBlur = () => {
+      setIsFocused(false);
+      onFocusChange(false);
+    };
+
+    const el = contentRef.current;
+    el.addEventListener('focus', handleFocus, true);
+    el.addEventListener('blur', handleBlur, true);
+
+    return () => {
+      el.removeEventListener('focus', handleFocus, true);
+      el.removeEventListener('blur', handleBlur, true);
+    };
+  }, [onFocusChange]);
 
   const handlePaste = (event) => {
     event.preventDefault();
@@ -47,7 +68,7 @@ function EditableDiv() {
   };
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%' }}> {/* EditableDiv에 대한 상대적 위치 지정 */}
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <div
         ref={contentRef}
         contentEditable={true}
@@ -62,7 +83,7 @@ function EditableDiv() {
           overflow: 'auto'
         }}
       />
-      <div className="text-finder-container"> {/* TextFinder 컴포넌트를 포함하는 div에 클래스 적용 */}
+      <div className="text-finder-container">
         <TextFinder show={showSearch} onSearch={handleSearchChange} />
       </div>
     </div>

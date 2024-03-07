@@ -8,6 +8,7 @@ function ClipboardMonitor() {
   const [showTextFinder, setShowTextFinder] = useState(false);
   // ClipboardMonitor 컴포넌트 내에서
   const [searchQuery, setSearchQuery] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -25,7 +26,7 @@ function ClipboardMonitor() {
         }
       }
 
-      if (event.ctrlKey && event.key === 'f') {
+      if (!isFocused && event.ctrlKey && event.key === 'f') {
         event.preventDefault(); // 기본 브라우저 검색 기능 방지
         setShowTextFinder(!showTextFinder); // TextFinder 표시/숨김 토글
       }
@@ -36,7 +37,7 @@ function ClipboardMonitor() {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [nextId, showTextFinder]);
+  }, [nextId, showTextFinder, isFocused]);
 
   const handleTitleChange = (index, newTitle) => {
     setClipboardContents((prevContents) =>
@@ -66,17 +67,21 @@ function ClipboardMonitor() {
   };
 
   // 검색 쿼리와 일치하는 부분을 하이라이트하는 함수
-const highlightText = (text, query) => {
-  if (!query) return text;
-  const parts = text.split(new RegExp(`(${query})`, 'gi'));
-  return parts.map((part, index) =>
-    part.toLowerCase() === query.toLowerCase() ? (
-      <span key={index} style={{ backgroundColor: 'yellow' }}>{part}</span>
-    ) : (
-      part
-    )
-  );
-};
+  const highlightText = (text, query) => {
+    if (!query) return text;
+    const parts = text.split(new RegExp(`(${query})`, 'gi'));
+    return parts.map((part, index) =>
+      part.toLowerCase() === query.toLowerCase() ? (
+        <span key={index} style={{ backgroundColor: 'yellow' }}>{part}</span>
+      ) : (
+        part
+      )
+    );
+  };
+
+  const handleFocusChange = (focused) => {
+    setIsFocused(focused);
+  };
 
   return (
     <div style={{ display: 'flex', height: '10vh' }}>
@@ -86,7 +91,7 @@ const highlightText = (text, query) => {
         position: 'fixed', // 좌측 영역을 고정
       }}>
         <h2>복사 작업할 텍스트</h2>
-        <EditableDiv searchQuery={searchQuery}/>
+        <EditableDiv searchQuery={searchQuery} onFocusChange={handleFocusChange}/>
       </div>
       <div style={{
         width: '45%',
