@@ -35,9 +35,10 @@ function EditableDiv({ onFocusChange }) {
       setIsFocused(true);
       onFocusChange(true);
     };
-    const handleBlur = () => {
+    const handleBlur = (event) => {
       setIsFocused(false);
       onFocusChange(false);
+      setContent(event.target.innerHTML);
     };
 
     const el = contentRef.current;
