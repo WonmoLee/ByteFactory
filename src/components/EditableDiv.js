@@ -5,7 +5,7 @@ import TextFinder from './TextFinder';
 function EditableDiv({ onFocusChange }) {
   const [content, setContent] = useState("이곳의 텍스트를 편집해보세요.");
   const [showSearch, setShowSearch] = useState(false);
-  const [isFocused, setIsFocused] = useState(false); // 포커스 상태 추가
+  const [isFocused, setIsFocused] = useState(false);
   const contentRef = useRef(null);
 
   useEffect(() => {
@@ -22,16 +22,6 @@ function EditableDiv({ onFocusChange }) {
     };
   }, [isFocused]);
 
-  const handleBlur = (event) => {
-    setContent(DOMPurify.sanitize(event.target.innerHTML));
-  };
-
-  useEffect(() => {
-    if (contentRef.current) {
-      contentRef.current.innerHTML = content;
-    }
-  }, [content]);
-
   useEffect(() => {
     const handleFocus = () => {
       setIsFocused(true);
@@ -41,6 +31,7 @@ function EditableDiv({ onFocusChange }) {
       setIsFocused(false);
       onFocusChange(false);
       setContent(event.target.innerHTML);
+      // 상태 업데이트를 제거하여 브라우저의 기본 실행 취소 기능을 유지
     };
 
     const el = contentRef.current;
@@ -61,7 +52,6 @@ function EditableDiv({ onFocusChange }) {
       pasteContent = clipboardData.getData('text/html');
     } else {
       pasteContent = clipboardData.getData('text/plain');
-      // 공백을 &nbsp;로 변환하는 대신 CSS 처리를 사용합니다.
       pasteContent = pasteContent.replace(/(?:\r\n|\r|\n)/g, '<br>');
     }
     const cleanContent = DOMPurify.sanitize(pasteContent);
@@ -83,7 +73,6 @@ function EditableDiv({ onFocusChange }) {
       <div
         ref={contentRef}
         contentEditable={true}
-        onBlur={handleBlur}
         onPaste={handlePaste}
         suppressContentEditableWarning={true}
         style={{
@@ -92,12 +81,14 @@ function EditableDiv({ onFocusChange }) {
           border: '1px solid #ccc',
           padding: '10px',
           overflow: 'auto',
-          whiteSpace: 'pre-wrap' // 연속 공백을 유지하면서 필요에 따라 줄바꿈
+          whiteSpace: 'pre-wrap'
         }}
       />
-      <div className="text-finder-container">
-        <TextFinder show={showSearch} onSearch={handleSearchChange} />
-      </div>
+      {showSearch && (
+        <div className="text-finder-container">
+          <TextFinder show={showSearch} onSearch={handleSearchChange} />
+        </div>
+      )}
     </div>
   );
 }
