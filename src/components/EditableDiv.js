@@ -23,11 +23,13 @@ function EditableDiv({ onFocusChange }) {
   }, [isFocused]);
 
   const handleBlur = (event) => {
-    setContent(event.target.innerHTML);
+    setContent(DOMPurify.sanitize(event.target.innerHTML));
   };
 
   useEffect(() => {
-    contentRef.current.innerHTML = content;
+    if (contentRef.current) {
+      contentRef.current.innerHTML = content;
+    }
   }, [content]);
 
   useEffect(() => {
@@ -53,9 +55,17 @@ function EditableDiv({ onFocusChange }) {
 
   const handlePaste = (event) => {
     event.preventDefault();
-    const text = event.clipboardData.getData('text/plain');
-    const cleanText = DOMPurify.sanitize(text);
-    document.execCommand('insertText', false, cleanText);
+    const clipboardData = event.clipboardData;
+    let pasteContent;
+    if (clipboardData.types.includes('text/html')) {
+      pasteContent = clipboardData.getData('text/html');
+    } else {
+      pasteContent = clipboardData.getData('text/plain');
+      // 공백을 &nbsp;로 변환하는 대신 CSS 처리를 사용합니다.
+      pasteContent = pasteContent.replace(/(?:\r\n|\r|\n)/g, '<br>');
+    }
+    const cleanContent = DOMPurify.sanitize(pasteContent);
+    document.execCommand('insertHTML', false, cleanContent);
   };
 
   const handleSearchChange = (query) => {
@@ -81,7 +91,8 @@ function EditableDiv({ onFocusChange }) {
           height: '80vh',
           border: '1px solid #ccc',
           padding: '10px',
-          overflow: 'auto'
+          overflow: 'auto',
+          whiteSpace: 'pre-wrap' // 연속 공백을 유지하면서 필요에 따라 줄바꿈
         }}
       />
       <div className="text-finder-container">
