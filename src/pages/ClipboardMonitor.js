@@ -16,12 +16,14 @@ function ClipboardMonitor() {
         const selection = document.getSelection();
         if (selection.toString().length > 0) {
           const text = selection.toString();
-
-          // Ctrl + Shift + C를 눌렀을 때의 동작 구현
-          setClipboardContents((prevContents) => [
-            ...prevContents,
-            { id: nextId, title: 'Untitled', content: text, isEditing: true },
-          ]);
+          const newItem = { id: nextId, title: 'Untitled', content: text, isEditing: true };
+    
+          setClipboardContents((prevContents) => {
+            const newContents = [...prevContents, newItem];
+            localStorage.setItem('clipboardContents', JSON.stringify(newContents)); // localStorage에 저장
+            return newContents;
+          });
+          
           setNextId(nextId + 1);
         }
       }
@@ -38,6 +40,13 @@ function ClipboardMonitor() {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [nextId, showTextFinder, isFocused]);
+
+  useEffect(() => {
+    const savedContents = localStorage.getItem('clipboardContents');
+    if (savedContents) {
+      setClipboardContents(JSON.parse(savedContents));
+    }
+  }, []);
 
   const handleTitleChange = (index, newTitle) => {
     setClipboardContents((prevContents) =>
@@ -60,6 +69,7 @@ function ClipboardMonitor() {
 
   const clearClipboard = () => {
     setClipboardContents([]); // 클립보드 내용을 초기화
+    localStorage.removeItem('clipboardContents');
   };
 
   const removeItem = (id) => {
