@@ -44,7 +44,13 @@ function ClipboardMonitor() {
   useEffect(() => {
     const savedContents = localStorage.getItem('clipboardContents');
     if (savedContents) {
-      setClipboardContents(JSON.parse(savedContents));
+        const parsedContents = JSON.parse(savedContents);
+        // 모든 항목의 isEditing 상태를 false로 설정
+        const contentsWithEditingDisabled = parsedContents.map(item => ({
+            ...item,
+            isEditing: false
+        }));
+        setClipboardContents(contentsWithEditingDisabled);
     }
   }, []);
 
@@ -73,7 +79,12 @@ function ClipboardMonitor() {
   };
 
   const removeItem = (id) => {
-    setClipboardContents(clipboardContents.filter(item => item.id !== id));
+      // 상태에서 항목을 제거
+      const updatedContents = clipboardContents.filter(item => item.id !== id);
+      setClipboardContents(updatedContents);
+
+      // 변경된 상태를 로컬 스토리지에 저장
+      localStorage.setItem('clipboardContents', JSON.stringify(updatedContents));
   };
 
   // 검색 쿼리와 일치하는 부분을 하이라이트하는 함수
