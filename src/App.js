@@ -6,6 +6,7 @@ import TextDiffViewer from './pages/TextDiffViewer';
 import ClipboardMonitor from './pages/ClipboardMonitor';
 //import DarkModeToggle from './components/DarkModeToggle';
 import Modal from './components/Modal';
+import ScrollToTopButton from './components/ScrollToTopButton';
 import './App.css';
 import logo from './assets/imgs/logo.png';
 
@@ -100,6 +101,7 @@ const App = () => {
             </Routes>
           )}
         </div>
+        <ScrollToTopButton />
       </div>
     </Router>
   );
