@@ -1,19 +1,54 @@
-import React from 'react';
+import React, { useState } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
-import { javascript } from '@codemirror/lang-javascript';
 import { oneDark } from '@codemirror/theme-one-dark';
+import { python } from '@codemirror/lang-python';
+import { javascript } from '@codemirror/lang-javascript';
+import { html } from '@codemirror/lang-html';
+import { css } from '@codemirror/lang-css';
 
 function TextEditor() {
+  const [selectedLanguage, setSelectedLanguage] = useState([]);
+  
+  const handleChangeLanguage = (event) => {
+    const language = event.target.value;
+    switch (language) {
+      case 'plaintext':
+        setSelectedLanguage([]); // 일반 텍스트 모드는 언어 확장 없이 설정
+        break;
+      case 'python':
+        setSelectedLanguage(python());
+        break;
+      case 'javascript':
+        setSelectedLanguage(javascript());
+        break;
+      case 'html':
+        setSelectedLanguage(html());
+        break;
+      case 'css':
+        setSelectedLanguage(css());
+        break;
+      default:
+        setSelectedLanguage([]);
+    }
+  };
+
   return (
-    <CodeMirror
-      value="// 여기에 코드를 입력하세요.\n"
-      height="300px"
-      extensions={[javascript()]}
-      theme={oneDark}
-      onChange={(value, viewUpdate) => {
-        console.log('value:', value);
-      }}
-    />
+    <div>
+      <select onChange={handleChangeLanguage} defaultValue="plaintext">
+        <option value="plaintext">일반 텍스트</option>
+        <option value="java">Java</option>
+        <option value="python">Python</option>
+        <option value="javascript">JavaScript</option>
+        <option value="html">HTML</option>
+        <option value="css">CSS</option>
+      </select>
+      <CodeMirror
+        value=""
+        height="400px"
+        extensions={[selectedLanguage]}
+        theme={oneDark}
+      />
+    </div>
   );
 }
 
