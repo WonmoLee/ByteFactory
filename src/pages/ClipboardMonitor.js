@@ -65,7 +65,7 @@ function ClipboardMonitor() {
         <p>간편 복사 (Ctrl + Shift + C 또는 Cmd + Shift + C)</p>
         <TextEditor />
       </div>
-      <div style={{ marginLeft: '55%', width: '40%', paddingLeft: '20px' }}> {/* <TextEditor /> 공간을 고려해 marginLeft 조정 및 padding 추가 */}
+      <div style={{ marginLeft: '45%', width: '50%', paddingLeft: '20px' }}> {/* <TextEditor /> 공간을 고려해 marginLeft 조정 및 padding 추가 */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h2>클립보드 히스토리</h2>
           <button onClick={handleClearAll}>전체 초기화</button>
