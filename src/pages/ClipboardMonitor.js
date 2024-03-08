@@ -67,7 +67,7 @@ function ClipboardMonitor() {
           <TextEditor />
         </div>
       </div>
-      <div style={{ marginLeft: '45%', width: '50%', paddingLeft: '20px' }}> {/* <TextEditor /> 공간을 고려해 marginLeft 조정 및 padding 추가 */}
+      <div style={{ marginLeft: '30%', width: '100%', paddingLeft: '20px' }}> {/* <TextEditor /> 공간을 고려해 marginLeft 조정 및 padding 추가 */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h2>클립보드 히스토리</h2>
           <button onClick={handleClearAll}>전체 초기화</button>
