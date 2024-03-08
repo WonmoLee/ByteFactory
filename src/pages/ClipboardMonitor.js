@@ -4,7 +4,7 @@ import TextEditor from '../components/TextEditor'; // TextFinder 컴포넌트 im
 function ClipboardMonitor() {
 
   return (
-    <div>
+    <div style={{marginTop: '100px'}}>
       <TextEditor/>
     </div>
   );
