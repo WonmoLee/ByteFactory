@@ -36,7 +36,6 @@ function TextEditor() {
     <div>
       <select onChange={handleChangeLanguage} defaultValue="plaintext">
         <option value="plaintext">일반 텍스트</option>
-        <option value="java">Java</option>
         <option value="python">Python</option>
         <option value="javascript">JavaScript</option>
         <option value="html">HTML</option>
@@ -44,7 +43,8 @@ function TextEditor() {
       </select>
       <CodeMirror
         value=""
-        height="400px"
+        width="700px"
+        height="700px"
         extensions={[selectedLanguage]}
         theme={oneDark}
       />
