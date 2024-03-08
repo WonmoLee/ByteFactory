@@ -1,18 +1,20 @@
 import React from 'react';
 import '../assets/Card.css'; // CSS 파일을 불러옵니다.
 import image1 from '../assets/imgs/service1.png';
+import image2 from '../assets/imgs/service2.png';
 
 const Card = ({ No, title, description }) => {
 
   const getBackgroundImage = (No) => {
     const images = {
       '1': image1,
+      '2': image2,
     };
 
-    if(No === "1") {
-      return `url(${images[No]})`;
-    } else if(No === "2") {
+    if(No == null) {
       return 'none';
+    } else {
+      return `url(${images[No]})`;
     }
   };
 

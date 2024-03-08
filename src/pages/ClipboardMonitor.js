@@ -61,9 +61,11 @@ function ClipboardMonitor() {
 
   return (
     <div style={{ marginTop: '20px', marginRight: '20px', display: 'flex', justifyContent: 'space-between' }}>
-      <div style={{ position: 'fixed', top: '80px', left: '200px', width: '40%' }}>
-        <p>간편 복사 (Ctrl + Shift + C 또는 Cmd + Shift + C)</p>
-        <TextEditor />
+      <div style={{ position: 'relative', width: '40%' }}> {/* position: relative로 설정하여, 내부 fixed 포지셔닝의 기준점을 제공 */}
+        <div style={{ position: 'fixed', top: '80px', left: '200px' }}>
+          <p>간편 복사 (Ctrl + Shift + C 또는 Cmd + Shift + C)</p>
+          <TextEditor />
+        </div>
       </div>
       <div style={{ marginLeft: '45%', width: '50%', paddingLeft: '20px' }}> {/* <TextEditor /> 공간을 고려해 marginLeft 조정 및 padding 추가 */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
