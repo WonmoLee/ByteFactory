@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import TextEditor from '../components/TextEditor';
+import TextFinder from '../components/TextFinder';
 
 function ClipboardMonitor() {
   const [clipboardItems, setClipboardItems] = useState([]);
+  const [search, setSearch] = useState({ term: '', visible: false });
+  const [isTextEditorFocused, setIsTextEditorFocused] = useState(false);
 
   // 컴포넌트 마운트 시 로컬 스토리지에서 클립보드 항목을 불러오기
   useEffect(() => {
@@ -36,11 +39,18 @@ function ClipboardMonitor() {
           setClipboardItems(prevItems => [...prevItems, newItem]);
         }
       }
+
+      if (event.ctrlKey && event.key === 'f') {
+        if (!isTextEditorFocused) {
+          event.preventDefault();
+          setSearch({ ...search, visible: !search.visible });
+        }
+      }
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [clipboardItems]);
+  }, [clipboardItems, isTextEditorFocused, search]);
 
   const handleTitleChange = (index, newTitle) => {
     const newItems = clipboardItems.map((item, idx) =>
@@ -59,17 +69,30 @@ function ClipboardMonitor() {
     localStorage.removeItem('clipboardItems');
   };
 
+  const highlightText = (text) => {
+    if (!search.term) return text;
+
+    const parts = text.split(new RegExp(`(${search.term})`, 'gi'));
+    return parts.map((part, index) =>
+      part.toLowerCase() === search.term.toLowerCase() ? <span key={index} style={{ backgroundColor: 'yellow' }}>{part}</span> : part
+    );
+  };
+
+  const handleTextEditorFocus = () => setIsTextEditorFocused(true);
+  const handleTextEditorBlur = () => setIsTextEditorFocused(false);
+
   return (
     <div style={{ marginTop: '20px', marginRight: '20px', display: 'flex', justifyContent: 'space-between' }}>
       <div style={{ position: 'relative', width: '40%' }}> {/* position: relative로 설정하여, 내부 fixed 포지셔닝의 기준점을 제공 */}
         <div style={{ position: 'fixed', top: '80px', left: '200px' }}>
           <p>간편 복사 (Ctrl + Shift + C 또는 Cmd + Shift + C)</p>
-          <TextEditor />
+          <TextEditor onFocus={handleTextEditorFocus} onBlur={handleTextEditorBlur}/>
         </div>
       </div>
       <div style={{ marginLeft: '30%', width: '100%', paddingLeft: '20px' }}> {/* <TextEditor /> 공간을 고려해 marginLeft 조정 및 padding 추가 */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h2>클립보드 히스토리</h2>
+          <TextFinder search={search} onSearchChange={setSearch} />
           <button onClick={handleClearAll}>전체 초기화</button>
         </div>
         <ul>
@@ -85,7 +108,7 @@ function ClipboardMonitor() {
               />
               <button onClick={() => handleDelete(index)} style={{ marginLeft: '5px' }}>삭제</button>
             </div>
-            <span style={{ display: 'block', whiteSpace: 'pre-wrap', marginLeft: '20px', marginTop: '20px', marginBottom: '40px' }}>{item.text}</span>
+            <span style={{ display: 'block', whiteSpace: 'pre-wrap', marginLeft: '20px', marginTop: '20px', marginBottom: '40px' }}>{highlightText(item.text)}</span>
           </li>
         ))}
         </ul>

@@ -6,7 +6,7 @@ import { javascript } from '@codemirror/lang-javascript';
 import { html } from '@codemirror/lang-html';
 import { css } from '@codemirror/lang-css';
 
-function TextEditor() {
+function TextEditor({ onFocus, onBlur }) {
   const [selectedLanguage, setSelectedLanguage] = useState([]);
   
   const handleChangeLanguage = (event) => {
@@ -47,6 +47,8 @@ function TextEditor() {
         height="700px"
         extensions={[selectedLanguage]}
         theme={oneDark}
+        onFocus={onFocus} // CodeMirror에 onFocus 이벤트 핸들러 추가
+        onBlur={onBlur} // CodeMirror에 onBlur 이벤트 핸들러 추가
       />
     </div>
   );
