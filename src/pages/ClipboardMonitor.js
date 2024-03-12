@@ -28,7 +28,7 @@ function ClipboardMonitor() {
 
   useEffect(() => {
     const handleKeyPress = (event) => {
-      if (event.ctrlKey && event.shiftKey && event.key === 'C') {
+      if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 'c') {
         event.preventDefault();
         const selectedText = document.getSelection()?.toString();
         if (selectedText) {
@@ -40,7 +40,7 @@ function ClipboardMonitor() {
         }
       }
 
-      if (event.ctrlKey && event.key === 'f') {
+      if (event.ctrlKey && event.key.toLowerCase() === 'f') {
         if (!isTextEditorFocused) {
           event.preventDefault();
           if (!search.visible) {
