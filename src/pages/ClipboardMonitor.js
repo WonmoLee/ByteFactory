@@ -43,7 +43,16 @@ function ClipboardMonitor() {
       if (event.ctrlKey && event.key === 'f') {
         if (!isTextEditorFocused) {
           event.preventDefault();
-          setSearch({ ...search, visible: !search.visible });
+          if (!search.visible) {
+            setSearch({ ...search, visible: true });
+          }
+        }
+      }
+
+      if (event.key === 'Escape') {
+        if (search.visible) {
+          event.preventDefault(); // 기본 이벤트를 막습니다.
+          setSearch({ ...search, visible: false }); // 검색 UI를 숨깁니다.
         }
       }
     };
@@ -81,6 +90,10 @@ function ClipboardMonitor() {
   const handleTextEditorFocus = () => setIsTextEditorFocused(true);
   const handleTextEditorBlur = () => setIsTextEditorFocused(false);
 
+  const handleClose = () => {
+    setSearch({ ...search, visible: false });
+  };
+
   return (
     <div style={{ marginTop: '20px', marginRight: '20px', display: 'flex', justifyContent: 'space-between' }}>
       <div style={{ position: 'relative', width: '40%' }}> {/* position: relative로 설정하여, 내부 fixed 포지셔닝의 기준점을 제공 */}
@@ -92,7 +105,11 @@ function ClipboardMonitor() {
       <div style={{ marginLeft: '30%', width: '100%', paddingLeft: '20px' }}> {/* <TextEditor /> 공간을 고려해 marginLeft 조정 및 padding 추가 */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h2>클립보드 히스토리</h2>
-          <TextFinder search={search} onSearchChange={setSearch} />
+          <TextFinder 
+            search={search} 
+            onSearchChange={setSearch} 
+            onClose={handleClose}
+          />
           <button onClick={handleClearAll}>전체 초기화</button>
         </div>
         <ul>
