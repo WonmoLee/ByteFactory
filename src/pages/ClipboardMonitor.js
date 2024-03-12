@@ -73,22 +73,21 @@ function ClipboardMonitor() {
           <button onClick={handleClearAll}>전체 초기화</button>
         </div>
         <ul>
-          {clipboardItems.map((item, index) => (
-            <li key={index} style={{ marginBottom: '10px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div
-                  contentEditable={true}
-                  onBlur={(e) => handleTitleChange(index, e.target.innerText)}
-                  onDoubleClick={(e) => {e.currentTarget.contentEditable = true;}}
-                  style={{ flex: 1, flexShrink: 1, fontWeight: 'bold', cursor: 'text', maxWidth: '50%' }}
-                >
-                  {item.title}
-                </div>
-                <button onClick={() => handleDelete(index)} style={{ marginLeft: '5px' }}>삭제</button>
-              </div>
-              <span style={{ display: 'block', whiteSpace: 'pre-wrap', marginLeft: '20px', marginTop: '20px', marginBottom: '40px' }}>{item.text}</span>
-            </li>
-          ))}
+        {clipboardItems.map((item, index) => (
+          <li key={index} style={{ marginBottom: '10px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              {/* 변경된 부분: contentEditable 대신 input 사용 */}
+              <input
+                type="text"
+                value={item.title}
+                onChange={(e) => handleTitleChange(index, e.target.value)}
+                style={{ flex: 1, flexShrink: 1, fontWeight: 'bold', cursor: 'text', maxWidth: '50%' }}
+              />
+              <button onClick={() => handleDelete(index)} style={{ marginLeft: '5px' }}>삭제</button>
+            </div>
+            <span style={{ display: 'block', whiteSpace: 'pre-wrap', marginLeft: '20px', marginTop: '20px', marginBottom: '40px' }}>{item.text}</span>
+          </li>
+        ))}
         </ul>
       </div>
     </div>
