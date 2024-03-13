@@ -1,57 +1,40 @@
-import React, { useState } from 'react';
-import CodeMirror from '@uiw/react-codemirror';
-import { oneDark } from '@codemirror/theme-one-dark';
-import { python } from '@codemirror/lang-python';
-import { javascript } from '@codemirror/lang-javascript';
-import { html } from '@codemirror/lang-html';
-import { css } from '@codemirror/lang-css';
+import React from 'react';
+import MonacoEditor from 'react-monaco-editor';
 
-function TextEditor({ onFocus, onBlur }) {
-  const [selectedLanguage, setSelectedLanguage] = useState([]);
+class TextEditor extends React.Component {
   
-  const handleChangeLanguage = (event) => {
-    const language = event.target.value;
-    switch (language) {
-      case 'plaintext':
-        setSelectedLanguage([]); // 일반 텍스트 모드는 언어 확장 없이 설정
-        break;
-      case 'python':
-        setSelectedLanguage(python());
-        break;
-      case 'javascript':
-        setSelectedLanguage(javascript());
-        break;
-      case 'html':
-        setSelectedLanguage(html());
-        break;
-      case 'css':
-        setSelectedLanguage(css());
-        break;
-      default:
-        setSelectedLanguage([]);
-    }
-  };
+  constructor(props) {
+    super(props);
+    this.editorDidMount = this.editorDidMount.bind(this);
+  }  
 
-  return (
-    <div>
-      <select onChange={handleChangeLanguage} defaultValue="plaintext">
-        <option value="plaintext">일반 텍스트</option>
-        <option value="python">Python</option>
-        <option value="javascript">JavaScript</option>
-        <option value="html">HTML</option>
-        <option value="css">CSS</option>
-      </select>
-      <CodeMirror
-        value=""
-        width="700px"
-        height="700px"
-        extensions={[selectedLanguage]}
-        theme={oneDark}
-        onFocus={onFocus} // CodeMirror에 onFocus 이벤트 핸들러 추가
-        onBlur={onBlur} // CodeMirror에 onBlur 이벤트 핸들러 추가
+  editorDidMount(editor, monaco) {
+    this.props.onEditorMounted(editor, monaco);
+  }  
+
+  onChange(newValue, e) {
+    console.log('변경 사항:', newValue);
+  }
+
+  render() {
+    const code = '// 여기에 코드를 입력하세요\n';
+    const options = {
+      selectOnLineNumbers: true
+    };
+
+    return (
+      <MonacoEditor
+        width="800"
+        height="600"
+        language="javascript"
+        theme="vs-dark"
+        value={code}
+        options={options}
+        onChange={this.onChange}
+        editorDidMount={this.editorDidMount}
       />
-    </div>
-  );
+    );
+  }
 }
 
 export default TextEditor;
