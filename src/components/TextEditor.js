@@ -1,37 +1,30 @@
 import React from 'react';
-import MonacoEditor from 'react-monaco-editor';
+import { Editor } from '@tinymce/tinymce-react';
 
 class TextEditor extends React.Component {
-  
-  constructor(props) {
-    super(props);
-    this.editorDidMount = this.editorDidMount.bind(this);
-  }  
-
-  editorDidMount(editor, monaco) {
-    this.props.onEditorMounted(editor, monaco);
-  }  
-
-  onChange(newValue, e) {
-    console.log('변경 사항:', newValue);
+  handleEditorChange = (content, editor) => {
+    console.log('Content was updated:', content);
   }
 
   render() {
-    const code = '// 여기에 코드를 입력하세요\n';
-    const options = {
-      selectOnLineNumbers: true
-    };
-
     return (
-      <MonacoEditor
-        width="800"
-        height="600"
-        language="javascript"
-        theme="vs-dark"
-        value={code}
-        options={options}
-        onChange={this.onChange}
-        editorDidMount={this.editorDidMount}
+      <Editor
+        apiKey='otpkea4d7ogncfks6cobhbypx8388nvicasrk335qrlsvo60'
+        initialValue="<p>Initial content</p>"
+        init={{
+          height: 700,
+          menubar: false,
+          plugins: [
+            'advlist autolink lists link image charmap print preview anchor',
+            'searchreplace visualblocks code fullscreen',
+            'insertdatetime media table paste code help wordcount'
+          ],
+          toolbar: 'undo redo | formatselect | ' +
+          'bold italic backcolor | alignleft aligncenter ' +
+          'alignright alignjustify | bullist numlist outdent indent | ' +
+          'removeformat | help'
+        }}
+        onEditorChange={this.handleEditorChange}
       />
     );
   }
