@@ -6,7 +6,7 @@ function ClipboardMonitor() {
   const [clipboardItems, setClipboardItems] = useState([]);
   const [search, setSearch] = useState({ term: '', visible: false });
   const [isTextEditorFocused, setIsTextEditorFocused] = useState(false);
-  const [editorInstance, setEditorInstance] = useState(null);
+  const [selectedText, setSelectedText] = useState('');
 
   // 컴포넌트 마운트 시 로컬 스토리지에서 클립보드 항목을 불러오기
   useEffect(() => {
@@ -31,16 +31,12 @@ function ClipboardMonitor() {
     const handleKeyPress = (event) => {
       if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 'c') {
         event.preventDefault();
-        if (editorInstance) {
-          const selection = editorInstance.getSelection();
-          const selectedText = editorInstance.getModel().getValueInRange(selection);
-          if (selectedText) {
-            const newItem = {
-              title: "Untitle",
-              text: selectedText,
-            };
-            setClipboardItems(prevItems => [...prevItems, newItem]);
-          }
+        if (selectedText) {
+          const newItem = {
+            title: "Untitle",
+            text: selectedText,
+          };
+          setClipboardItems(prevItems => [...prevItems, newItem]);
         }
       }
 
@@ -63,7 +59,7 @@ function ClipboardMonitor() {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [clipboardItems, isTextEditorFocused, search, editorInstance]);
+  }, [clipboardItems, isTextEditorFocused, search, selectedText]);
 
   const handleTitleChange = (index, newTitle) => {
     const newItems = clipboardItems.map((item, idx) =>
@@ -98,12 +94,16 @@ function ClipboardMonitor() {
     setSearch({ ...search, visible: false });
   };
 
+  const handleTextSelected = (updatedText) => {
+    setSelectedText(updatedText);
+  };
+
   return (
     <div style={{ marginTop: '20px', marginRight: '20px', display: 'flex', justifyContent: 'space-between' }}>
       <div style={{ position: 'relative', width: '40%' }}> {/* position: relative로 설정하여, 내부 fixed 포지셔닝의 기준점을 제공 */}
         <div style={{ position: 'fixed', top: '80px', left: '200px' }}>
           <p>간편 복사 (Ctrl + Shift + C 또는 Cmd + Shift + C)</p>
-          <TextEditor onEditorMounted={setEditorInstance} onFocus={handleTextEditorFocus} onBlur={handleTextEditorBlur}/>
+          <TextEditor onFocus={handleTextEditorFocus} onBlur={handleTextEditorBlur} onTextSelect={handleTextSelected}/>
         </div>
       </div>
       <div style={{ marginLeft: '30%', width: '100%', paddingLeft: '20px' }}> {/* <TextEditor /> 공간을 고려해 marginLeft 조정 및 padding 추가 */}
