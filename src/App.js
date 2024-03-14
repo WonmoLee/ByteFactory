@@ -4,6 +4,7 @@ import Card from './components/Card';
 import Sidebar from './components/Sidebar'; // 사이드바 컴포넌트 import
 import TextDiffViewer from './pages/TextDiffViewer';
 import ClipboardMonitor from './pages/ClipboardMonitor';
+import BookMark from './pages/BookMark';
 //import DarkModeToggle from './components/DarkModeToggle';
 import Modal from './components/Modal';
 import ScrollToTopButton from './components/ScrollToTopButton';
@@ -88,6 +89,9 @@ const App = () => {
               <Link to="/ClipboardMonitor" onClick={() => handleCardClick('ClipboardMonitor')}>
                 <Card No="2" title="ClipboardMonitor" description="주어진 텍스트에 대한 클립보드를 모니터링하는 프로그램입니다." />
               </Link>
+              <Link to="/BookMark" onClick={() => handleCardClick('BookMark')}>
+                <Card No="3" title="BookMark" description="주어진 텍스트에 대한 클립보드를 모니터링하는 프로그램입니다." />
+              </Link>
               <Modal show={showModal} onClose={handleCloseModal}>
                 <p>서비스 준비 중입니다! &gt;.&lt;</p>
               </Modal>
@@ -98,6 +102,7 @@ const App = () => {
             <Routes>
               <Route path="/TextDiffViewer" element={<TextDiffViewer />} />
               <Route path="/ClipboardMonitor" element={<ClipboardMonitor />} />
+              <Route path="/BookMark" element={<BookMark />} />
             </Routes>
           )}
         </div>
