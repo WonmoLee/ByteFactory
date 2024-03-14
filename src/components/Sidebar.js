@@ -10,6 +10,11 @@ const Sidebar = ({ isOpen, setHeaderTitle }) => {
     setHeaderTitle(title);
   };
 
+  const openExternalLink = (url) => {
+    // 메인 프로세스로 메시지 보내기
+    window.electron.send('open-link-external', url);
+  };
+
   return (
     <div className={`sidebar ${isOpen ? 'open' : ''}`}>
       <div className="sidebar-item" onClick={() => handleItemClick('/TextDiffViewer', 'TextDiffViewer')}>
@@ -19,6 +24,14 @@ const Sidebar = ({ isOpen, setHeaderTitle }) => {
       <div className="sidebar-item" onClick={() => handleItemClick('/ClipboardMonitor', 'ClipboardMonitor')}>
         <i className="icon-messages"></i> {/* 이곳에 메시지 아이콘 SVG 또는 Font Awesome 아이콘을 사용할 수 있습니다 */}
         <span>간편 복사</span>
+      </div>
+      <div className="sidebar-item" onClick={() => openExternalLink('https://devdocs.io/')}>
+        <i className="icon-messages"></i> {/* 이곳에 메시지 아이콘 SVG 또는 Font Awesome 아이콘을 사용할 수 있습니다 */}
+        <span>DevDocs</span>
+      </div>
+      <div className="sidebar-item" onClick={() => openExternalLink('https://chat.openai.com/')}>
+        <i className="icon-messages"></i> {/* 이곳에 메시지 아이콘 SVG 또는 Font Awesome 아이콘을 사용할 수 있습니다 */}
+        <span>ChatGPT</span>
       </div>
       {/* 추가적인 사이드바 아이템들을 여기에 구성할 수 있습니다 */}
     </div>

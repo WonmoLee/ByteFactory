@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const path = require('path');
 
 let isDev;
@@ -30,6 +30,10 @@ import('electron-is-dev').then((module) => {
     // 닫기 이벤트
     ipcMain.on('close-event', () => {
       win.close();
+    });
+
+    ipcMain.on('open-link-external', (event, url) => {
+      shell.openExternal(url);
     });
   
     // 개발 환경인지 프로덕션 환경인지에 따라 URL 분기
