@@ -32,22 +32,34 @@ const BookMark = () => {
         }
     }, [nodes]);
 
-    // 외부 클릭 감지를 위한 useEffect
     useEffect(() => {
         const handleClickOutside = (event) => {
+            // contextMenu가 보이는 경우, 이를 숨깁니다.
             if (contextMenu.visible) {
                 setContextMenu({ ...contextMenu, visible: false });
             }
+    
+            // 클릭된 요소가 우측 패널의 일부인지 확인합니다.
+            const rightPanel = document.querySelector('.right-panel');
+            if (rightPanel && rightPanel.contains(event.target)) {
+                // 클릭된 요소가 node-container 내부인지 확인합니다.
+                const isNodeContainerClick = event.target.closest('.node-container');
+    
+                // node-container 내부가 아니라면, selectedPath를 초기화합니다.
+                if (!isNodeContainerClick) {
+                    setSelectedPath([]); // 선택된 폴더의 포커스 해제
+                }
+            }
         };
-
+    
         // 클릭 이벤트 리스너 등록
         document.addEventListener('click', handleClickOutside);
-
+    
         // 클린업 함수에서 이벤트 리스너 제거
         return () => {
             document.removeEventListener('click', handleClickOutside);
         };
-    }, [contextMenu]);
+    }, [contextMenu]);    
 
     const addFolder = () => {
         if (!folderName.trim()) {
@@ -278,7 +290,7 @@ const BookMark = () => {
                         onContextMenu={(e) => handleContextMenu(e, node.id)}
                         style={{
                             backgroundColor: selectedPath.includes(node.id) ? '#007bff' : 'transparent',
-                            color: selectedPath.includes(node.id) ? '#000000' : '#ffffff',
+                            color: selectedPath.includes(node.id) ? '#ffffff' : '#000',
                         }}
                     >
                         {editingNodeId === node.id ? (
@@ -295,13 +307,15 @@ const BookMark = () => {
                                 autoFocus
                             />
                         ) : (
-                            <span className="node-label">{node.type === 'folder' ? '📁' : '🔗'} {node.name}</span>
+                            <span className="node-label">
+                                {node.type === 'folder' ? (selectedPath.includes(node.id) ? '📂' : '📁') : '🔗'} {node.name}
+                            </span>
                         )}
                     </div>              
                 ))}
             </div>
         );
-    };
+    };    
 
     // 노드 이름 업데이트 로직
     const updateNodeName = (nodeId, newName) => {
