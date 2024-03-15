@@ -10,11 +10,6 @@ const Sidebar = ({ isOpen, setHeaderTitle }) => {
     setHeaderTitle(title);
   };
 
-  // const openExternalLink = (url) => {
-  //   // 메인 프로세스로 메시지 보내기
-  //   window.electron.send('open-link-external', url);
-  // };
-
   return (
     <div className={`sidebar ${isOpen ? 'open' : ''}`}>
       <div className="sidebar-item" onClick={() => handleItemClick('/TextDiffViewer', 'TextDiffViewer')}>

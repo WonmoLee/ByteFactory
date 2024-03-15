@@ -90,7 +90,7 @@ const App = () => {
                 <Card No="2" title="ClipboardMonitor" description="주어진 텍스트에 대한 클립보드를 모니터링하는 프로그램입니다." />
               </Link>
               <Link to="/BookMark" onClick={() => handleCardClick('BookMark')}>
-                <Card No="3" title="BookMark" description="주어진 텍스트에 대한 클립보드를 모니터링하는 프로그램입니다." />
+                <Card No="3" title="BookMark" description="북마크 프로그램입니다." />
               </Link>
               <Modal show={showModal} onClose={handleCloseModal}>
                 <p>서비스 준비 중입니다! &gt;.&lt;</p>

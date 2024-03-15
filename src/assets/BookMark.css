@@ -1,0 +1,40 @@
+.container {
+    display: flex;
+    flex-direction: row;
+    margin-top: 20px;
+}
+
+.left-panel {
+    flex: 1;
+    padding: 10px;
+    background-color: #f0f0f0;
+}
+
+.right-panel {
+    flex: 3;
+    padding: 10px;
+}
+
+.input {
+    width: 99%;
+    margin-bottom: 10px;
+    height: 40px;
+}
+
+.btn_finder {
+    width: 100%;
+    margin-bottom: 10px;
+    height: 40px;
+    background-color: #494444;
+    color: white;
+}
+
+.button {   
+    width: 100%;
+    margin-bottom: 10px;
+    height: 40px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
