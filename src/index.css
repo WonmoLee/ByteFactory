@@ -22,6 +22,10 @@ body.dark-mode {
   }
 }
 
+p {
+  margin: 0px;
+}
+
 a {
   text-decoration: none;
 }
@@ -36,4 +40,9 @@ textarea {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+input {
+  margin: 0px;
+  padding: 0px;
 }

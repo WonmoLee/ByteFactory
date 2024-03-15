@@ -37,8 +37,8 @@ function TextFinder({ search, onSearchChange, onClose }) {
         onChange={e => onSearchChange({ ...search, term: e.target.value })}
         style={inputStyle}
       />
-      <button style={buttonStyle}>↑</button>
-      <button style={buttonStyle}>↓</button>
+      {/* <button style={buttonStyle}>↑</button>
+      <button style={buttonStyle}>↓</button> */}
       <button onClick={onClose} style={buttonStyle}>X</button>
     </div>
   );
