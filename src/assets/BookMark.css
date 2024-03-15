@@ -13,6 +13,7 @@
 .right-panel {
     flex: 3;
     padding: 10px;
+    height: 770px;
 }
 
 .input {

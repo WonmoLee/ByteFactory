@@ -253,6 +253,15 @@ const BookMark = () => {
     };
     
     const renderColumnView = () => {
+        // nodes 배열이 비어 있으면 안내 메시지를 표시합니다.
+        if (nodes.length === 0) {
+            return (
+                <div className="empty-message">
+                    북마크를 등록해주세요.
+                </div>
+            );
+        }
+    
         // 모든 컬럼의 렌더링 결과를 담을 배열
         const columns = [];
     
@@ -278,9 +287,19 @@ const BookMark = () => {
                 {columns}
             </div>
         );
-    };
+    };    
     
     const renderNodes = (nodes, currentPath) => {
+        // nodes 배열이 비어 있으면 안내 메시지를 표시합니다.
+        if (nodes.length === 0) {
+            return (
+                <div className="empty-message" style={{ minWidth: '200px', padding: '10px', textAlign: 'center' }}>
+                    북마크를 등록해주세요.
+                </div>
+            );
+        }
+    
+        // nodes 배열에 내용이 있을 경우 기존 로직을 수행합니다.
         return (
             <div style={{ minWidth: '200px', borderRight: '1px solid #ccc', padding: '10px' }}>
                 {nodes.map(node => (
@@ -311,7 +330,7 @@ const BookMark = () => {
                                 {node.type === 'folder' ? (selectedPath.includes(node.id) ? '📂' : '📁') : '🔗'} {node.name}
                             </span>
                         )}
-                    </div>              
+                    </div>
                 ))}
             </div>
         );
