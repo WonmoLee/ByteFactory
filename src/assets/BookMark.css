@@ -27,7 +27,22 @@
     height: 40px;
     background-color: #494444;
     color: white;
+    text-align: center;
 }
+
+.btn_finder p {
+    display: flex; /* Flexbox를 사용 */
+    align-items: center; /* 세로 방향 가운데 정렬 */
+    justify-content: center; /* 가로 방향 가운데 정렬 */
+    font-size: 15px;
+    height: 30px; /* p 태그의 높이를 설정 */
+}
+
+.btn_finder p img {
+    width: 30px;
+    height: 25px;
+    margin-left: 5px; /* 텍스트와 이미지 사이 간격 */
+}  
 
 .button {   
     width: 100%;

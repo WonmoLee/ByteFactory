@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Modal from '../components/Modal';
 
 import '../assets/BookMark.css'; // 스타일시트 임포트
+import FinderIcon from '../assets/imgs/finderIcon.png';
 
 const BookMark = () => {
     const [nodes, setNodes] = useState([]);
@@ -12,6 +13,9 @@ const BookMark = () => {
     const [modalContent, setModalContent] = useState('');
     const [selectedPath, setSelectedPath] = useState([]);
     const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, selectedNodeId: null });
+    const [editingNodeId, setEditingNodeId] = useState(null);
+    const [editingNodeName, setEditingNodeName] = useState("");
+
 
     // 로컬 스토리지에서 북마크 데이터 불러오기
     useEffect(() => {
@@ -46,7 +50,11 @@ const BookMark = () => {
     }, [contextMenu]);
 
     const addFolder = () => {
-        if (!folderName.trim()) return;
+        if (!folderName.trim()) {
+            // 폴더 이름이 비어 있는 경우, 모달을 띄워 사용자에게 알립니다.
+            handleOpenModal('폴더 이름을 입력해주세요.');
+            return false;
+        }
     
         const newFolder = {
             id: Date.now(),
@@ -71,7 +79,10 @@ const BookMark = () => {
     }
 
     const addBookmark = () => {
-        if (!bookmarkName.trim() || !bookmarkUrl.trim()) return;
+        if (!bookmarkName.trim() || !bookmarkUrl.trim()) {
+            handleOpenModal('북마크 이름과 URL을 모두 입력해주세요.');
+            return;
+        }
     
         let formattedUrl = bookmarkUrl;
         // URL이 http:// 또는 https://로 시작하지 않는 경우, http://를 추가합니다.
@@ -133,39 +144,54 @@ const BookMark = () => {
         const { selectedNodeId } = contextMenu;
         deleteNode(selectedNodeId);
         handleCloseContextMenu();
-    };
-
-    const deleteNode = (nodeId, parentId = null) => {
-        if (parentId === null) {
-            // 최상위 레벨에서 노드 삭제
-            setNodes(nodes.filter(node => node.id !== nodeId));
-        } else {
-            // 재귀적으로 부모를 찾아 자식 노드 삭제
-            setNodes(nodes.map(node => {
-                if (node.id === parentId) {
-                    return {
-                        ...node,
-                        children: node.children.filter(child => child.id !== nodeId)
-                    };
-                } else if (node.children) {
-                    return {
-                        ...node,
-                        children: deleteNode(nodeId, parentId, node.children)
-                    };
-                }
-                return node;
-            }));
+    
+        // 삭제된 노드가 selectedPath에 포함되어 있는지 확인하고, 필요한 경우 selectedPath 업데이트
+        if (selectedPath.includes(selectedNodeId)) {
+            const newPath = selectedPath.slice(0, selectedPath.indexOf(selectedNodeId));
+            setSelectedPath(newPath);
         }
-    };
+    };    
+
+    const deleteNode = (nodeId) => {
+        const deleteNodeRecursive = (nodes, nodeId) => {
+            return nodes.reduce((acc, node) => {
+                if (node.id === nodeId) {
+                    // 노드를 삭제하지 않고 건너뛰어 현재 누적값을 반환
+                    return acc;
+                } else if (node.children) {
+                    // 현재 노드에 자식이 있다면, 자식 목록에서도 검사하여 재귀적으로 삭제
+                    const filteredChildren = deleteNodeRecursive(node.children, nodeId);
+                    // 현재 노드를 누적값에 추가하되, 필터링된 자식 목록을 사용
+                    return [...acc, {...node, children: filteredChildren}];
+                }
+                // 현재 노드가 삭제 대상이 아니고 자식도 없다면 그대로 누적값에 추가
+                return [...acc, node];
+            }, []);
+        };
+    
+        // 전체 노드 목록에서 시작하여 삭제 대상 노드를 재귀적으로 제거
+        setNodes(deleteNodeRecursive(nodes, nodeId));
+    };    
 
     const renderContextMenu = () => {
         if (!contextMenu.visible) return null;
-
+    
         return (
             <ul className="context-menu" style={{ top: contextMenu.y, left: contextMenu.x }}>
+                <li onClick={() => handleStartEditing(contextMenu.selectedNodeId)}>이름 변경</li>
                 <li onClick={handleDeleteNode}>삭제</li>
             </ul>
         );
+    };
+
+    // 이름 변경 시작 처리
+    const handleStartEditing = (nodeId) => {
+        const node = findNodeById(nodes, nodeId);
+        if (node) {
+            setEditingNodeId(nodeId);
+            setEditingNodeName(node.name);
+            setContextMenu({ ...contextMenu, visible: false }); // 컨텍스트 메뉴 닫기
+        }
     };
 
     const handleOpenModal = (content) => {
@@ -253,14 +279,44 @@ const BookMark = () => {
                              cursor: 'pointer',
                              padding: '5px',
                              backgroundColor: selectedPath.includes(node.id) ? '#007bff' : 'transparent',
-                             color: selectedPath.includes(node.id) ? '#000000' : '#ffffff', // 선택된 요소의 텍스트 색상도 변경
+                             color: selectedPath.includes(node.id) ? '#000000' : '#ffffff',
                          }}>
-                        {node.type === 'folder' ? '📁' : '🔗'} {node.name}
+                        {editingNodeId === node.id ? (
+                            <input
+                                type="text"
+                                value={editingNodeName}
+                                onChange={(e) => setEditingNodeName(e.target.value)}
+                                onBlur={() => updateNodeName(node.id, editingNodeName)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        updateNodeName(node.id, editingNodeName);
+                                    }
+                                }}
+                                autoFocus
+                            />
+                        ) : (
+                            <span>{node.type === 'folder' ? '📁' : '🔗'} {node.name}</span>
+                        )}
                     </div>
                 ))}
             </div>
         );
     };
+
+    // 노드 이름 업데이트 로직
+    const updateNodeName = (nodeId, newName) => {
+        const updateRecursive = (nodes) => nodes.map((node) => {
+            if (node.id === nodeId) {
+                return { ...node, name: newName };
+            } else if (node.children) {
+                return { ...node, children: updateRecursive(node.children) }; // 재귀적으로 자식 노드도 업데이트
+            }
+            return node;
+        });
+    
+        setNodes(updateRecursive(nodes));
+        setEditingNodeId(null); // 편집 모드 종료
+    };    
     
     const findNodeById = (nodes, id) => {
         // 주어진 ID에 해당하는 노드를 찾는 재귀 함수입니다.
@@ -305,7 +361,9 @@ const BookMark = () => {
                         placeholder="북마크 URL"
                     />
                     <button onClick={addBookmark} className="button">북마크 추가</button>
-                    <button onClick={openFinder} className="btn_finder">파일 탐색기</button>
+                    <button onClick={openFinder} className="btn_finder">
+                        <p>파일탐색기 / <img src={FinderIcon} alt="Finder" /></p>
+                    </button>
                 </div>
             </div>
 
