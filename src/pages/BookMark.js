@@ -253,7 +253,6 @@ const BookMark = () => {
     };
     
     const renderColumnView = () => {
-        // nodes 배열이 비어 있으면 안내 메시지를 표시합니다.
         if (nodes.length === 0) {
             return (
                 <div className="empty-message">
@@ -267,10 +266,9 @@ const BookMark = () => {
     
         // 최상위 노드 컬럼 추가
         columns.push(
-            renderNodes(
-                nodes.filter(node => !node.parentId),
-                []
-            )
+            <div key="column-root" style={{ minWidth: '200px', padding: '10px' }}>
+                {renderNodes(nodes.filter(node => !node.parentId), [])}
+            </div>
         );
     
         // 선택된 경로에 있는 각 폴더의 하위 노드 컬럼 추가
@@ -278,7 +276,16 @@ const BookMark = () => {
             const currentPath = selectedPath.slice(0, index + 1);
             const folder = findNodeById(nodes, folderId);
             if (folder) {
-                columns.push(renderNodes(folder.children, currentPath));
+                // 마지막 컬럼인 경우에는 borderRight 스타일을 적용하지 않습니다.
+                const columnStyle = {
+                    minWidth: '200px',
+                    padding: '10px',
+                };
+                columns.push(
+                    <div key={`column-${folderId}`} style={columnStyle}>
+                        {renderNodes(folder.children, currentPath)}
+                    </div>
+                );
             }
         });
     
@@ -287,7 +294,7 @@ const BookMark = () => {
                 {columns}
             </div>
         );
-    };    
+    };
     
     const renderNodes = (nodes, currentPath) => {
         // nodes 배열이 비어 있으면 안내 메시지를 표시합니다.
