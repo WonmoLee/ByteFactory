@@ -28,6 +28,7 @@
     background-color: #494444;
     color: white;
     text-align: center;
+    cursor: pointer;
 }
 
 .btn_finder p {
@@ -75,4 +76,18 @@
 
 .context-menu li:hover {
     background-color: #f5f5f5;
+}
+
+.node-container {
+    cursor: pointer;
+    padding: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.node-container:hover {
+    background-color: #726b6b;
+}
+
+.node-label {
+    color: #ffffff;
 }

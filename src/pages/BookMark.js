@@ -273,14 +273,14 @@ const BookMark = () => {
             <div style={{ minWidth: '200px', borderRight: '1px solid #ccc', padding: '10px' }}>
                 {nodes.map(node => (
                     <div key={node.id}
-                         onClick={() => node.type === 'folder' ? handleFolderClick(node.id) : openExternalLink(node.url)}
-                         onContextMenu={(e) => handleContextMenu(e, node.id)}
-                         style={{
-                             cursor: 'pointer',
-                             padding: '5px',
-                             backgroundColor: selectedPath.includes(node.id) ? '#007bff' : 'transparent',
-                             color: selectedPath.includes(node.id) ? '#000000' : '#ffffff',
-                         }}>
+                        className="node-container"
+                        onClick={() => node.type === 'folder' ? handleFolderClick(node.id) : openExternalLink(node.url)}
+                        onContextMenu={(e) => handleContextMenu(e, node.id)}
+                        style={{
+                            backgroundColor: selectedPath.includes(node.id) ? '#007bff' : 'transparent',
+                            color: selectedPath.includes(node.id) ? '#000000' : '#ffffff',
+                        }}
+                    >
                         {editingNodeId === node.id ? (
                             <input
                                 type="text"
@@ -295,9 +295,9 @@ const BookMark = () => {
                                 autoFocus
                             />
                         ) : (
-                            <span>{node.type === 'folder' ? '📁' : '🔗'} {node.name}</span>
+                            <span className="node-label">{node.type === 'folder' ? '📁' : '🔗'} {node.name}</span>
                         )}
-                    </div>
+                    </div>              
                 ))}
             </div>
         );
