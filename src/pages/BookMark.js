@@ -11,6 +11,7 @@ const BookMark = () => {
     const [showModal, setShowModal] = useState(false);
     const [modalContent, setModalContent] = useState('');
     const [selectedPath, setSelectedPath] = useState([]);
+    const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, selectedNodeId: null });
 
     // 로컬 스토리지에서 북마크 데이터 불러오기
     useEffect(() => {
@@ -26,6 +27,23 @@ const BookMark = () => {
             localStorage.setItem('bookmarks', JSON.stringify(nodes));
         }
     }, [nodes]);
+
+    // 외부 클릭 감지를 위한 useEffect
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (contextMenu.visible) {
+                setContextMenu({ ...contextMenu, visible: false });
+            }
+        };
+
+        // 클릭 이벤트 리스너 등록
+        document.addEventListener('click', handleClickOutside);
+
+        // 클린업 함수에서 이벤트 리스너 제거
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, [contextMenu]);
 
     const addFolder = () => {
         if (!folderName.trim()) return;
@@ -96,6 +114,27 @@ const BookMark = () => {
         });
     };    
 
+    const handleContextMenu = (event, nodeId) => {
+        event.preventDefault();
+        event.stopPropagation();
+        setContextMenu({
+            visible: true,
+            x: event.pageX,
+            y: event.pageY,
+            selectedNodeId: nodeId
+        });
+    };
+
+    const handleCloseContextMenu = () => {
+        setContextMenu({ ...contextMenu, visible: false });
+    };
+
+    const handleDeleteNode = () => {
+        const { selectedNodeId } = contextMenu;
+        deleteNode(selectedNodeId);
+        handleCloseContextMenu();
+    };
+
     const deleteNode = (nodeId, parentId = null) => {
         if (parentId === null) {
             // 최상위 레벨에서 노드 삭제
@@ -117,6 +156,16 @@ const BookMark = () => {
                 return node;
             }));
         }
+    };
+
+    const renderContextMenu = () => {
+        if (!contextMenu.visible) return null;
+
+        return (
+            <ul className="context-menu" style={{ top: contextMenu.y, left: contextMenu.x }}>
+                <li onClick={handleDeleteNode}>삭제</li>
+            </ul>
+        );
     };
 
     const handleOpenModal = (content) => {
@@ -199,6 +248,7 @@ const BookMark = () => {
                 {nodes.map(node => (
                     <div key={node.id}
                          onClick={() => node.type === 'folder' ? handleFolderClick(node.id) : openExternalLink(node.url)}
+                         onContextMenu={(e) => handleContextMenu(e, node.id)}
                          style={{
                              cursor: 'pointer',
                              padding: '5px',
@@ -261,6 +311,7 @@ const BookMark = () => {
 
             <div className="right-panel">
                 {renderColumnView()}
+                {renderContextMenu()}
             </div>
             <Modal show={showModal} onClose={handleCloseModal}>
                 {modalContent}
