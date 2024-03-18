@@ -314,6 +314,10 @@ const BookMark = () => {
                         className="node-container"
                         onClick={() => node.type === 'folder' ? handleFolderClick(node.id) : openExternalLink(node.url)}
                         onContextMenu={(e) => handleContextMenu(e, node.id)}
+                        draggable="true" // 드래그 가능한 요소로 설정
+                        onDragStart={(e) => handleDragStart(e, node.id)} // 드래그 시작 이벤트 핸들러
+                        onDragOver={(e) => handleDragOver(e)} // 드래그 오버 이벤트 핸들러
+                        onDrop={(e) => handleDrop(e, node.id)} // 드롭 이벤트 핸들러
                         style={{
                             backgroundColor: selectedPath.includes(node.id) ? '#007bff' : 'transparent',
                             color: selectedPath.includes(node.id) ? '#ffffff' : '#000',
@@ -359,17 +363,131 @@ const BookMark = () => {
     };    
     
     const findNodeById = (nodes, id) => {
-        // 주어진 ID에 해당하는 노드를 찾는 재귀 함수입니다.
-        for (const node of nodes) {
-            if (node.id === id) return node;
-            if (node.children) {
-                const found = findNodeById(node.children, id);
-                if (found) return found;
+        const stack = [...nodes];
+        
+        while (stack.length > 0) {
+            const currentNode = stack.pop();
+    
+            if (currentNode && Number(currentNode.id) === Number(id)) {
+                return currentNode;
+            }
+    
+            if (currentNode && currentNode.children) {
+                stack.push(...currentNode.children);
             }
         }
+    
         return null;
-    };        
+    };
 
+    const handleDragStart = (e, nodeId) => {
+        e.dataTransfer.setData("nodeId", nodeId);
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+    };
+    
+    const handleDrop = (e, targetNodeId) => {
+        const draggedNodeId = e.dataTransfer.getData("nodeId");
+    
+        if (draggedNodeId && Number(draggedNodeId) !== Number(targetNodeId)) {
+            // 새로운 노드 배열을 생성하여 상태를 업데이트합니다.
+            let updatedNodes = moveNode([...nodes], draggedNodeId, targetNodeId);
+    
+            // g2를 삭제합니다.
+            updatedNodes = removeNode(updatedNodes, draggedNodeId);
+    
+            // 이동한 후의 노드 위치를 찾습니다.
+            const newLocationNode = findNodeById(updatedNodes, draggedNodeId);
+    
+            // 이동한 노드의 새로운 경로를 찾아 setSelectedPath를 호출합니다.
+            const newPath = findPathToNode(updatedNodes, newLocationNode.id);
+            setSelectedPath(newPath);
+    
+            setNodes(updatedNodes);
+        }
+    };
+    
+    const removeNode = (nodes, nodeIdToRemove) => {
+        // 노드를 찾아 삭제합니다.
+        return nodes.filter(node => Number(node.id) !== Number(nodeIdToRemove));
+    };
+
+    const moveNode = (nodes, draggedNodeId, targetNodeId) => {
+        // 드래그된 노드를 찾습니다.
+        const draggedNode = findNodeById(nodes, draggedNodeId);
+    
+        // 드래그된 노드를 찾지 못한 경우 원래의 노드 배열을 반환합니다.
+        if (!draggedNode) {
+            console.error('Dragged node not found.');
+            return nodes;
+        }
+    
+        // 타겟 노드를 찾습니다.
+        const targetNode = findNodeById(nodes, targetNodeId);
+    
+        // 타겟 노드를 찾지 못한 경우 원래의 노드 배열을 반환합니다.
+        if (!targetNode) {
+            console.error('Target node not found.');
+            return nodes;
+        }
+    
+        // 타겟 노드의 부모 노드를 찾습니다.
+        const targetParentNode = findNodeParent(nodes, targetNodeId);
+    
+        // 드래그된 노드가 이미 타겟 노드의 자식인 경우 노드 이동을 취소합니다.
+        if (targetNode.children && targetNode.children.some(child => Number(child.id) === Number(draggedNodeId))) {
+            console.error('The dragged node is already a child of the target node.');
+            return nodes;
+        }
+    
+        // 드래그된 노드의 부모 노드를 찾습니다.
+        const draggedParentNode = findNodeParent(nodes, draggedNodeId);
+    
+        // 드래그된 노드를 타겟 노드의 자식으로 추가합니다.
+        targetNode.children.push({ ...draggedNode, parentId: targetNodeId });
+    
+        // 드래그된 노드를 기존 위치에서 삭제합니다.
+        if (draggedParentNode) {
+            draggedParentNode.children = draggedParentNode.children.filter(child => Number(child.id) !== Number(draggedNodeId));
+        }
+    
+        // 부모로 이동되는 경우 부모 노드가 변경되므로 부모 노드의 children을 업데이트합니다.
+        if (targetParentNode) {
+            const updatedChildren = targetParentNode.children.map(child => {
+                if (Number(child.id) === Number(draggedNodeId)) {
+                    return null;
+                }
+                return child;
+            }).filter(Boolean);
+            targetParentNode.children = updatedChildren;
+        }
+    
+        // 업데이트된 노드 목록을 반환합니다.
+        return nodes;
+    };
+    
+    // 부모 노드를 찾는 함수
+    const findNodeParent = (nodes, nodeId) => {
+        const stack = [...nodes];
+    
+        while (stack.length > 0) {
+            const currentNode = stack.pop();
+    
+            if (currentNode.children && currentNode.children.some(child => Number(child.id) === Number(nodeId))) {
+                return currentNode;
+            }
+    
+            if (currentNode.children) {
+                stack.push(...currentNode.children);
+            }
+        }
+    
+        return null;
+    };
+    
+    
     return (
         <div className="container">
             <div className="left-panel">
