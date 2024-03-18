@@ -1,4 +1,5 @@
-const { app, BrowserWindow, ipcMain, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, dialog } = require('electron');
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
 
 let isDev;
@@ -67,5 +68,35 @@ import('electron-is-dev').then((module) => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
     }
+  });
+
+  app.on('ready', () => {
+    autoUpdater.checkForUpdatesAndNotify();
+  });
+  
+  autoUpdater.on('update-available', () => {
+    dialog.showMessageBox({
+      type: 'info',
+      title: '업데이트 가능',
+      message: '새로운 버전이 사용 가능합니다. 다운로드를 시작할까요?',
+      buttons: ['업데이트', '나중에']
+    }).then(result => {
+      if (result.response === 0) { // '업데이트' 버튼
+        autoUpdater.downloadUpdate();
+      }
+    });
+  });
+  
+  autoUpdater.on('update-downloaded', () => {
+    dialog.showMessageBox({
+      type: 'info',
+      title: '업데이트 설치',
+      message: '업데이트가 다운로드 되었습니다. 애플리케이션을 재시작하여 업데이트를 적용할까요?',
+      buttons: ['재시작', '나중에']
+    }).then(result => {
+      if (result.response === 0) { // '재시작' 버튼
+        autoUpdater.quitAndInstall();
+      }
+    });
   });
 });
