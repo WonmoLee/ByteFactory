@@ -81,8 +81,7 @@
       "icon": "./public/logo.png"
     },
     "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true
+      "oneClick": true
     },
     "mac": {
       "identity": null,
