@@ -1,0 +1,22 @@
+appId: com.bytefactory.tool
+productName: Bytefactory
+directories:
+  output: release/
+files:
+  - '!**/*.ts'
+  - '!**/*.js.map'
+win:
+  target: nsis
+mac:
+  target:
+    - dmg
+    - zip
+linux:
+  target:
+    - AppImage
+    - deb
+publish:
+  provider: github
+  repo: ByteFactory
+  owner: WonmoLee
+  token: ${GH_TOKEN}

@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
+    "dotenv": "^16.4.5",
     "electron": "^29.0.0",
     "electron-builder": "^24.12.0",
     "wait-on": "^7.2.0"
@@ -41,7 +42,8 @@
     "react-start": "set BROWSER=none&& react-scripts start",
     "electron-start": "electron ./public/electron.js",
     "dev": "concurrently \"npm run react-start\" \"wait-on http://localhost:3000 && npm run electron-start\"",
-    "deploy": "electron-builder build"
+    "deploy": "electron-builder build",
+    "release": "node build.js"
   },
   "eslintConfig": {
     "extends": [
