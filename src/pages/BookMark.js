@@ -308,39 +308,46 @@ const BookMark = () => {
     
         // nodes 배열에 내용이 있을 경우 기존 로직을 수행합니다.
         return (
-            <div style={{ minWidth: '200px', borderRight: '1px solid #ccc', padding: '10px' }}>
+            <div className="node-outter-container"
+                 style={{ minWidth: '200px', borderRight: '1px solid #ccc', padding: '10px'}}
+            >
                 {nodes.map(node => (
-                    <div key={node.id}
-                        className="node-container"
-                        onClick={() => node.type === 'folder' ? handleFolderClick(node.id) : openExternalLink(node.url)}
-                        onContextMenu={(e) => handleContextMenu(e, node.id)}
-                        draggable="true" // 드래그 가능한 요소로 설정
-                        onDragStart={(e) => handleDragStart(e, node.id)} // 드래그 시작 이벤트 핸들러
-                        onDragOver={(e) => handleDragOver(e)} // 드래그 오버 이벤트 핸들러
-                        onDrop={(e) => handleDrop(e, node.id)} // 드롭 이벤트 핸들러
-                        style={{
-                            backgroundColor: selectedPath.includes(node.id) ? '#007bff' : 'transparent',
-                            color: selectedPath.includes(node.id) ? '#ffffff' : '#000',
-                        }}
+                    <div key={node.id} className="node-big-container"
+                         onDragOver={(e) => handleBigDragOver(e)}
+                         onDrop={(e) => handleBigDrop(e, node.id)}
                     >
-                        {editingNodeId === node.id ? (
-                            <input
-                                type="text"
-                                value={editingNodeName}
-                                onChange={(e) => setEditingNodeName(e.target.value)}
-                                onBlur={() => updateNodeName(node.id, editingNodeName)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        updateNodeName(node.id, editingNodeName);
-                                    }
-                                }}
-                                autoFocus
-                            />
-                        ) : (
-                            <span className="node-label">
-                                {node.type === 'folder' ? (selectedPath.includes(node.id) ? '📂' : '📁') : '🔗'} {node.name}
-                            </span>
-                        )}
+                        <div key={node.id}
+                            className="node-container"
+                            onClick={() => node.type === 'folder' ? handleFolderClick(node.id) : openExternalLink(node.url)}
+                            onContextMenu={(e) => handleContextMenu(e, node.id)}
+                            draggable="true" // 드래그 가능한 요소로 설정
+                            onDragStart={(e) => handleDragStart(e, node.id)} // 드래그 시작 이벤트 핸들러
+                            onDragOver={(e) => handleDragOver(e)} // 드래그 오버 이벤트 핸들러
+                            onDrop={(e) => handleDrop(e, node.id)} // 드롭 이벤트 핸들러
+                            style={{
+                                backgroundColor: selectedPath.includes(node.id) ? '#007bff' : 'transparent',
+                                color: selectedPath.includes(node.id) ? '#ffffff' : '#000',
+                            }}
+                        >
+                            {editingNodeId === node.id ? (
+                                <input
+                                    type="text"
+                                    value={editingNodeName}
+                                    onChange={(e) => setEditingNodeName(e.target.value)}
+                                    onBlur={() => updateNodeName(node.id, editingNodeName)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            updateNodeName(node.id, editingNodeName);
+                                        }
+                                    }}
+                                    autoFocus
+                                />
+                            ) : (
+                                <span className="node-label">
+                                    {node.type === 'folder' ? (selectedPath.includes(node.id) ? '📂' : '📁') : '🔗'} {node.name}
+                                </span>
+                            )}
+                        </div>
                     </div>
                 ))}
             </div>
@@ -390,7 +397,7 @@ const BookMark = () => {
     
     const handleDrop = (e, targetNodeId) => {
         const draggedNodeId = e.dataTransfer.getData("nodeId");
-    
+ 
         if (draggedNodeId && Number(draggedNodeId) !== Number(targetNodeId)) {
             // 새로운 노드 배열을 생성하여 상태를 업데이트합니다.
             let updatedNodes = moveNode([...nodes], draggedNodeId, targetNodeId);
@@ -487,6 +494,112 @@ const BookMark = () => {
         return null;
     };
     
+
+
+
+    const handleBigDragOver = (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy'; // 드롭 효과 설정
+    };
+    
+    const handleBigDrop = (e, targetNodeId) => {
+        e.preventDefault();
+        
+        const draggedNodeId = e.dataTransfer.getData("nodeId");
+        const mouseY = e.clientY;
+        const targetRect = e.target.getBoundingClientRect();
+        const targetTop = targetRect.top;
+        const targetBottom = targetRect.bottom;
+
+        if( e.target.className === "node-container") {
+            return false;
+        }
+
+        // 마우스의 Y 좌표가 타겟 요소의 상단 절반인지 하단 절반인지 확인
+        const isTopHalf = mouseY < (targetTop + targetBottom) / 2;
+
+        // isTopHalf 변수를 사용하여 드롭된 위치를 구분할 수 있음
+        let updatedNodes = moveNode2([...nodes], draggedNodeId, targetNodeId, isTopHalf);
+    
+        // 이동한 후의 노드 위치를 찾습니다.
+        const newLocationNode = findNodeById(updatedNodes, draggedNodeId);
+    
+        // 이동한 노드의 새로운 경로를 찾아 setSelectedPath를 호출합니다.
+        const newPath = findPathToNode(updatedNodes, newLocationNode.id);
+        setSelectedPath(newPath);
+
+        setNodes(updatedNodes);
+    };
+
+    const moveNode2 = (nodes, draggedNodeId, targetNodeId, isTopHalf) => {
+        // 드래그된 노드를 찾습니다.
+        const draggedNode = findNodeById(nodes, draggedNodeId);
+    
+        // 드래그된 노드를 찾지 못한 경우 원래의 노드 배열을 반환합니다.
+        if (!draggedNode) {
+            console.error('Dragged node not found.');
+            return nodes;
+        }
+    
+        // 타겟 노드를 찾습니다.
+        const targetNode = findNodeById(nodes, targetNodeId);
+    
+        // 타겟 노드를 찾지 못한 경우 원래의 노드 배열을 반환합니다.
+        if (!targetNode) {
+            console.error('Target node not found.');
+            return nodes;
+        }
+    
+        // 타겟 노드의 부모 노드를 찾습니다.
+        const targetParentNode = findNodeParent(nodes, targetNodeId);
+
+        // 드래그된 노드를 기존 위치에서 삭제합니다.
+        let updatedNodes = removeNodeAndChildren(nodes, draggedNodeId);
+    
+        // 드래그된 노드를 타겟 노드의 바로 위나 아래에 추가하기 위해 새로운 변수에 저장합니다.
+        const nodeToAdd = { ...draggedNode, parentId: targetParentNode ? targetParentNode.id : null };
+    
+        // 드래그된 노드를 타겟 노드의 바로 위나 아래에 추가합니다.
+        if (isTopHalf) {
+            // 타겟 노드의 바로 위에 추가하는 로직
+            if (targetParentNode) {
+                const index = targetParentNode.children.findIndex(child => Number(child.id) === Number(targetNodeId));
+                targetParentNode.children.splice(index, 0, nodeToAdd);
+            } else {
+                // 타겟 노드가 최상위 노드인 경우
+                const index = updatedNodes.findIndex(node => Number(node.id) === Number(targetNodeId));
+                updatedNodes.splice(index, 0, nodeToAdd);
+            }
+        } else {
+            // 타겟 노드의 바로 아래에 추가하는 로직
+            if (targetParentNode) {
+                const index = targetParentNode.children.findIndex(child => Number(child.id) === Number(targetNodeId));
+                targetParentNode.children.splice(index + 1, 0, nodeToAdd);
+            } else {
+                // 타겟 노드가 최상위 노드인 경우
+                const index = updatedNodes.findIndex(node => Number(node.id) === Number(targetNodeId));
+                updatedNodes.splice(index + 1, 0, nodeToAdd);
+            }
+        }
+    
+        // 업데이트된 노드 목록을 반환합니다.
+        return updatedNodes;
+    };
+
+    // 드래그된 노드를 기존 위치에서 삭제합니다.
+    const removeNodeAndChildren = (nodes, nodeId) => {
+        return nodes.filter(node => {
+            if (Number(node.id) === Number(nodeId)) {
+                return false; // 해당 노드를 삭제합니다.
+            }
+            // 자식 노드가 있는 경우 재귀적으로 자식 노드도 삭제합니다.
+            if (node.children) {
+                node.children = removeNodeAndChildren(node.children, nodeId);
+            }
+            return true;
+        });
+    };
+
     
     return (
         <div className="container">
