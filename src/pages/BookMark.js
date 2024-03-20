@@ -15,7 +15,7 @@ const BookMark = () => {
     const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, selectedNodeId: null });
     const [editingNodeId, setEditingNodeId] = useState(null);
     const [editingNodeName, setEditingNodeName] = useState("");
-
+    const [dragOverNodeId, setDragOverNodeId] = useState({ id: null, isTopHalf: false });
 
     // 로컬 스토리지에서 북마크 데이터 불러오기
     useEffect(() => {
@@ -43,7 +43,7 @@ const BookMark = () => {
             const rightPanel = document.querySelector('.right-panel');
             if (rightPanel && rightPanel.contains(event.target)) {
                 // 클릭된 요소가 node-container 내부인지 확인합니다.
-                const isNodeContainerClick = event.target.closest('.node-container');
+                const isNodeContainerClick = event.target.closest('.node-outter-container');
     
                 // node-container 내부가 아니라면, selectedPath를 초기화합니다.
                 if (!isNodeContainerClick) {
@@ -241,16 +241,7 @@ const BookMark = () => {
         }
     };
 
-    const findPathToNode = (nodes, id, path = []) => {
-        for (const node of nodes) {
-            if (node.id === id) return path;
-            if (node.children) {
-                const foundPath = findPathToNode(node.children, id, [...path, node.id]);
-                if (foundPath) return foundPath;
-            }
-        }
-        return null;
-    };
+    
     
     const renderColumnView = () => {
         if (nodes.length === 0) {
@@ -296,11 +287,11 @@ const BookMark = () => {
         );
     };
     
-    const renderNodes = (nodes, currentPath) => {
+    const renderNodes = (nodes) => {
         // nodes 배열이 비어 있으면 안내 메시지를 표시합니다.
         if (nodes.length === 0) {
             return (
-                <div className="empty-message" style={{ minWidth: '200px', padding: '10px', textAlign: 'center' }}>
+                <div className="empty-message" style={{ minWidth: '200px', padding: '20px 10px', textAlign: 'center' }}>
                     북마크를 등록해주세요.
                 </div>
             );
@@ -313,8 +304,17 @@ const BookMark = () => {
             >
                 {nodes.map(node => (
                     <div key={node.id} className="node-big-container"
-                         onDragOver={(e) => handleBigDragOver(e)}
+                         onDragOver={(e) => handleBigDragOver(e, node.id)}
                          onDrop={(e) => handleBigDrop(e, node.id)}
+                         onDragLeave={(e) => handleBigDragLeave(e)}
+                         style={{
+                            borderTop : (dragOverNodeId && dragOverNodeId.id === node.id) ?
+                            (dragOverNodeId.isTopHalf)
+                            ? "3px solid blue" : "0px": "0px",
+                            borderBottom : (dragOverNodeId && dragOverNodeId.id === node.id) ?
+                            (!dragOverNodeId.isTopHalf)
+                            ? "3px solid blue" : "0px": "0px",
+                        }}
                     >
                         <div key={node.id}
                             className="node-container"
@@ -325,7 +325,7 @@ const BookMark = () => {
                             onDragOver={(e) => handleDragOver(e)} // 드래그 오버 이벤트 핸들러
                             onDrop={(e) => handleDrop(e, node.id)} // 드롭 이벤트 핸들러
                             style={{
-                                backgroundColor: selectedPath.includes(node.id) ? '#007bff' : 'transparent',
+                                backgroundColor: (selectedPath.includes(node.id) ? '#007bff' : 'transparent'),
                                 color: selectedPath.includes(node.id) ? '#ffffff' : '#000',
                             }}
                         >
@@ -387,6 +387,36 @@ const BookMark = () => {
         return null;
     };
 
+    // 부모 노드를 찾는 함수
+    const findNodeParent = (nodes, nodeId) => {
+        const stack = [...nodes];
+    
+        while (stack.length > 0) {
+            const currentNode = stack.pop();
+    
+            if (currentNode.children && currentNode.children.some(child => Number(child.id) === Number(nodeId))) {
+                return currentNode;
+            }
+    
+            if (currentNode.children) {
+                stack.push(...currentNode.children);
+            }
+        }
+    
+        return null;
+    };
+
+    const findPathToNode = (nodes, id, path = []) => {
+        for (const node of nodes) {
+            if (node.id === id) return path;
+            if (node.children) {
+                const foundPath = findPathToNode(node.children, id, [...path, node.id]);
+                if (foundPath) return foundPath;
+            }
+        }
+        return null;
+    };
+
     const handleDragStart = (e, nodeId) => {
         e.dataTransfer.setData("nodeId", nodeId);
     };
@@ -394,16 +424,26 @@ const BookMark = () => {
     const handleDragOver = (e) => {
         e.preventDefault();
     };
-    
+
     const handleDrop = (e, targetNodeId) => {
         const draggedNodeId = e.dataTransfer.getData("nodeId");
- 
+        const childrenId = isFindNodeChildren(nodes, draggedNodeId, targetNodeId);
+
+        if(findNodeById(nodes, targetNodeId).type === "bookmark") {
+            return false;
+        }
+
+        if(childrenId) {
+            setDragOverNodeId(null);
+            return false;
+        }
+
         if (draggedNodeId && Number(draggedNodeId) !== Number(targetNodeId)) {
             // 새로운 노드 배열을 생성하여 상태를 업데이트합니다.
             let updatedNodes = moveNode([...nodes], draggedNodeId, targetNodeId);
     
             // g2를 삭제합니다.
-            updatedNodes = removeNode(updatedNodes, draggedNodeId);
+            updatedNodes = updatedNodes.filter(node => Number(node.id) !== Number(draggedNodeId))
     
             // 이동한 후의 노드 위치를 찾습니다.
             const newLocationNode = findNodeById(updatedNodes, draggedNodeId);
@@ -411,15 +451,42 @@ const BookMark = () => {
             // 이동한 노드의 새로운 경로를 찾아 setSelectedPath를 호출합니다.
             const newPath = findPathToNode(updatedNodes, newLocationNode.id);
             setSelectedPath(newPath);
-    
             setNodes(updatedNodes);
         }
+        setDragOverNodeId(null); // 드래그 오버 상태 초기화
     };
-    
-    const removeNode = (nodes, nodeIdToRemove) => {
-        // 노드를 찾아 삭제합니다.
-        return nodes.filter(node => Number(node.id) !== Number(nodeIdToRemove));
-    };
+
+    // 자식이면 true
+    const isFindNodeChildren = (nodes, nodeId, targetNodeId) => {
+        // 드래그된 노드를 찾습니다.
+        const draggedNode = findNodeById(nodes, nodeId);
+
+        // 드래그된 노드를 찾지 못한 경우 false를 반환합니다.
+        if (!draggedNode) {
+            return false;
+        }
+
+        // 타겟 노드를 찾습니다.
+        const targetNode = findNodeById(nodes, targetNodeId);
+
+        // 타겟 노드를 찾지 못한 경우 false를 반환합니다.
+        if (!targetNode) {
+            return false;
+        }
+
+        // 타겟 노드의 모든 자식을 확인합니다.
+        if (draggedNode.children) {
+            for (const child of draggedNode.children) {
+                // 자식 노드가 드래그된 노드와 같은 경우 또는 자식의 자식인 경우 true를 반환합니다.
+                if (Number(child.id) === Number(targetNodeId) || isFindNodeChildren(nodes, child.id, targetNodeId)) {
+                    return true;
+                }
+            }
+        }
+
+        // 자식 노드가 아니거나 자식의 자식이 아닌 경우 false를 반환합니다.
+        return false;
+    }
 
     const moveNode = (nodes, draggedNodeId, targetNodeId) => {
         // 드래그된 노드를 찾습니다.
@@ -427,7 +494,6 @@ const BookMark = () => {
     
         // 드래그된 노드를 찾지 못한 경우 원래의 노드 배열을 반환합니다.
         if (!draggedNode) {
-            console.error('Dragged node not found.');
             return nodes;
         }
     
@@ -436,7 +502,6 @@ const BookMark = () => {
     
         // 타겟 노드를 찾지 못한 경우 원래의 노드 배열을 반환합니다.
         if (!targetNode) {
-            console.error('Target node not found.');
             return nodes;
         }
     
@@ -445,7 +510,6 @@ const BookMark = () => {
     
         // 드래그된 노드가 이미 타겟 노드의 자식인 경우 노드 이동을 취소합니다.
         if (targetNode.children && targetNode.children.some(child => Number(child.id) === Number(draggedNodeId))) {
-            console.error('The dragged node is already a child of the target node.');
             return nodes;
         }
     
@@ -475,31 +539,34 @@ const BookMark = () => {
         return nodes;
     };
     
-    // 부모 노드를 찾는 함수
-    const findNodeParent = (nodes, nodeId) => {
-        const stack = [...nodes];
     
-        while (stack.length > 0) {
-            const currentNode = stack.pop();
-    
-            if (currentNode.children && currentNode.children.some(child => Number(child.id) === Number(nodeId))) {
-                return currentNode;
-            }
-    
-            if (currentNode.children) {
-                stack.push(...currentNode.children);
-            }
-        }
-    
-        return null;
-    };
     
 
 
 
-    const handleBigDragOver = (e) => {
+    const handleBigDragOver = (e, nodeId) => {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'copy'; // 드롭 효과 설정
+
+        const mouseY = e.clientY;
+        const targetRect = e.target.getBoundingClientRect();
+        const targetTop = targetRect.top;
+        const targetBottom = targetRect.bottom;
+
+        // 마우스의 Y 좌표가 타겟 요소의 상단 절반인지 하단 절반인지 확인
+        const isTopHalf = mouseY < (targetTop + targetBottom) / 2;
+
+        if( e.target.className !== "node-big-container") {
+            setDragOverNodeId(null);
+        } else {
+            if(isTopHalf) {
+                setDragOverNodeId({id:nodeId, isTopHalf:true});
+            } else {
+                setDragOverNodeId({id:nodeId, isTopHalf:false});
+            }
+        }
+        
+        
     };
     
     const handleBigDrop = (e, targetNodeId) => {
@@ -511,7 +578,15 @@ const BookMark = () => {
         const targetTop = targetRect.top;
         const targetBottom = targetRect.bottom;
 
-        if( e.target.className === "node-container") {
+        const childrenId = isFindNodeChildren(nodes, draggedNodeId, targetNodeId);
+
+        if(childrenId) {
+            setDragOverNodeId(null);
+            return false;
+        }
+
+        if(e.target.className !== "node-big-container") {
+            setDragOverNodeId(null);
             return false;
         }
 
@@ -528,7 +603,13 @@ const BookMark = () => {
         const newPath = findPathToNode(updatedNodes, newLocationNode.id);
         setSelectedPath(newPath);
 
+        setDragOverNodeId(null); // 드래그 오버 상태 초기화
         setNodes(updatedNodes);
+    };
+
+    // 드래그 이벤트가 끝날 때의 핸들러
+    const handleBigDragLeave = (e) => {
+        setDragOverNodeId(null); // 드래그 오버 상태 초기화
     };
 
     const moveNode2 = (nodes, draggedNodeId, targetNodeId, isTopHalf) => {
@@ -537,7 +618,6 @@ const BookMark = () => {
     
         // 드래그된 노드를 찾지 못한 경우 원래의 노드 배열을 반환합니다.
         if (!draggedNode) {
-            console.error('Dragged node not found.');
             return nodes;
         }
     
@@ -546,7 +626,6 @@ const BookMark = () => {
     
         // 타겟 노드를 찾지 못한 경우 원래의 노드 배열을 반환합니다.
         if (!targetNode) {
-            console.error('Target node not found.');
             return nodes;
         }
     
