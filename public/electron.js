@@ -3,6 +3,7 @@ const { autoUpdater } = require('electron-updater');
 const path = require('path');
 
 let isDev;
+let updateApproved = false;
 
 import('electron-is-dev').then((module) => {
   isDev = module.default;
@@ -57,6 +58,14 @@ import('electron-is-dev').then((module) => {
   // 앱이 준비되면 창 생성
   app.whenReady().then(createWindow);
   
+  app.on('before-quit', (event) => {
+    if (!updateApproved) {
+        // 사용자가 업데이트를 승인하지 않았다면 종료 과정을 중단
+        event.preventDefault();
+        // 필요한 경우 사용자에게 알림을 표시하거나 추가 로직을 실행할 수 있습니다.
+    }
+  });
+
   // 모든 창이 닫혔을 때 앱 종료
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
@@ -91,7 +100,10 @@ import('electron-is-dev').then((module) => {
       buttons: ['예', '나중에']
     }).then(result => {
       if (result.response === 0) { // '재시작' 버튼
-        autoUpdater.quitAndInstall();
+        win.webContents.session.clearCache().then(() => {
+          updateApproved = true;
+          autoUpdater.quitAndInstall();
+        });
       }
     });
   });
