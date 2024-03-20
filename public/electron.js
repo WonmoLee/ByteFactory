@@ -100,10 +100,8 @@ import('electron-is-dev').then((module) => {
       buttons: ['예', '나중에']
     }).then(result => {
       if (result.response === 0) { // '재시작' 버튼
-        win.webContents.session.clearCache().then(() => {
-          updateApproved = true;
-          autoUpdater.quitAndInstall();
-        });
+        updateApproved = true;
+        autoUpdater.quitAndInstall();
       }
     });
   });
