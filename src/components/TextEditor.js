@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
+import { search } from "@codemirror/search"; // 검색 기능을 위한 import
 import { oneDark } from '@codemirror/theme-one-dark';
 import { python } from '@codemirror/lang-python';
 import { javascript } from '@codemirror/lang-javascript';
@@ -55,7 +56,7 @@ function TextEditor({ onFocus, onBlur, onTextSelect }) {
         value=""
         width="700px"
         height="700px"
-        extensions={[selectedLanguage]}
+        extensions={[selectedLanguage, search()]}
         theme={oneDark}
         onFocus={onFocus} // CodeMirror에 onFocus 이벤트 핸들러 추가
         onBlur={onBlur} // CodeMirror에 onBlur 이벤트 핸들러 추가
