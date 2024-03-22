@@ -100,10 +100,14 @@ import('electron-is-dev').then((module) => {
       message: '업데이트 버전이 있습니다. 지금 적용하시겠습니까?',
       buttons: ['예', '나중에']
     }).then(result => {
-        console.log(result.response);
-        return false;
-      if (result.response === 0) { // '재시작' 버튼
+      if (result.response === 0) { // '예' 버튼
         updateApproved = true;
+      } else {
+        updateApproved = false; // '나중에' 버튼을 클릭하면 false로 설정
+      }
+  
+      // 사용자가 업데이트를 승인한 경우에만 업데이트 진행
+      if(updateApproved) {
         autoUpdater.quitAndInstall();
       }
     });
