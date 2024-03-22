@@ -28,8 +28,13 @@
     </div>
     <script>
         // contextBridge를 통해 노출된 API 사용
-        window.electron.send('update-confirm-response', true);
-        window.electron.send('update-confirm-response', false);
+        document.getElementById('accept').addEventListener('click', () => {
+            window.electron.send('update-confirm-response', true);
+        });
+
+        document.getElementById('later').addEventListener('click', () => {
+            window.electron.send('update-confirm-response', false);
+        });
     </script>
 </body>
 </html>

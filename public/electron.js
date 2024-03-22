@@ -15,9 +15,8 @@ import('electron-is-dev').then((module) => {
       height: 900,
       webPreferences: {
         preload: path.join(__dirname, '../build/preload.js'),
-        nodeIntegration: true,
+        nodeIntegration: false,
         contextIsolation: true,
-        enableRemoteModule: true
       },
       resizable: false,
       frame: false
