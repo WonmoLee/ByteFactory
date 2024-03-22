@@ -2,11 +2,12 @@ const { app, BrowserWindow, ipcMain, shell, dialog } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
 
-let win;
 let isDev;
 
 import('electron-is-dev').then((module) => {
   isDev = module.default;
+
+  let win;
   
   function createWindow() {
     // 브라우저 창 생성
@@ -64,7 +65,7 @@ import('electron-is-dev').then((module) => {
       frame: false, // 최소화 및 닫기 버튼 제거
       webPreferences: {
         preload: path.join(__dirname, '../build/preload.js'),
-        nodeIntegration: true,
+        nodeIntegration: false,
         contextIsolation: true,
       }
     });
