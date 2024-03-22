@@ -13,3 +13,16 @@ contextBridge.exposeInMainWorld('electron', {
     }
   }
 });
+
+window.addEventListener('DOMContentLoaded', () => {
+  const acceptButton = document.getElementById('accept');
+  const laterButton = document.getElementById('later');
+
+  acceptButton.addEventListener('click', () => {
+    ipcRenderer.send('update-confirm-response', true);
+  });
+
+  laterButton.addEventListener('click', () => {
+    ipcRenderer.send('update-confirm-response', false);
+  });
+});

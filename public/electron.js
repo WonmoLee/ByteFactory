@@ -2,15 +2,15 @@ const { app, BrowserWindow, ipcMain, shell, dialog } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
 
+let win;
 let isDev;
-let updateApproved = false;
 
 import('electron-is-dev').then((module) => {
   isDev = module.default;
   
   function createWindow() {
     // 브라우저 창 생성
-    let win = new BrowserWindow({
+    win = new BrowserWindow({
       width: 1800,
       height: 900,
       webPreferences: {
@@ -54,17 +54,39 @@ import('electron-is-dev').then((module) => {
       win = null;
     });
   }
+
+  function showUpdateConfirmModal() {
+    let modal = new BrowserWindow({
+      width: 400,
+      height: 200,
+      parent: win, // mainWindow는 메인 BrowserWindow 인스턴스의 변수명입니다.
+      modal: true,
+      show: false,
+      frame: false, // 최소화 및 닫기 버튼 제거
+      webPreferences: {
+        preload: path.join(__dirname, '../build/preload.js'),
+        nodeIntegration: true,
+        contextIsolation: true,
+      }
+    });
+  
+    modal.loadURL(`file://${path.join(__dirname, '../build/updateConfirm.html')}`); // 업데이트 확인 HTML 파일 로드
+  
+    modal.once('ready-to-show', () => {
+      modal.show();
+    });
+  
+    // 모달 창에서 응답을 받음
+    ipcMain.once('update-confirm-response', (event, acceptUpdate) => {
+      if (acceptUpdate) {
+        autoUpdater.quitAndInstall();
+      }
+      modal.close();
+    });
+  }
   
   // 앱이 준비되면 창 생성
   app.whenReady().then(createWindow);
-  
-  app.on('before-quit', (event) => {
-    if (!updateApproved) {
-        // 사용자가 업데이트를 승인하지 않았다면 종료 과정을 중단
-        event.preventDefault();
-        // 필요한 경우 사용자에게 알림을 표시하거나 추가 로직을 실행할 수 있습니다.
-    }
-  });
 
   // 모든 창이 닫혔을 때 앱 종료
   app.on('window-all-closed', () => {
@@ -93,22 +115,7 @@ import('electron-is-dev').then((module) => {
   });
   
   autoUpdater.on('update-downloaded', () => {
-    dialog.showMessageBox({
-      type: 'info',
-      title: '업데이트 버전 설치',
-      message: '업데이트 버전이 있습니다. 지금 적용하시겠습니까?',
-      buttons: ['예', '나중에']
-    }).then(result => {
-      if (result.response === 0) { // '예' 버튼
-        updateApproved = true;
-      } else {
-        updateApproved = false; // '나중에' 버튼을 클릭하면 false로 설정
-      }
-  
-      // 사용자가 업데이트를 승인한 경우에만 업데이트 진행
-      if(updateApproved) {
-        autoUpdater.quitAndInstall();
-      }
-    });
+    // dialog.showMessageBox 대신 새로 작성한 모달 함수를 사용합니다.
+    showUpdateConfirmModal();
   });
 });
