@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>업데이트 확인</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>업데이트 버전이 있습니다.</h1>
+    <p>지금 적용하시겠습니까?</p>
+    <div>
+        <button id="accept">예</button>
+        <button id="later">나중에</button>
+    </div>
+    <script>
+        // contextBridge를 통해 노출된 API 사용
+        window.electron.send('update-confirm-response', true);
+        window.electron.send('update-confirm-response', false);
+    </script>
+</body>
+</html>
