@@ -47,7 +47,6 @@ import('electron-is-dev').then((module) => {
     } else {
       // 프로덕션 환경: 빌드된 React 앱 로드
       win.loadURL(`file://${path.join(__dirname, '../build/index.html')}`);
-      win.webContents.openDevTools();
     }
   
     // 창이 닫힐 때 발생하는 이벤트
