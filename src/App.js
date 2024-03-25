@@ -68,9 +68,11 @@ const App = () => {
   };
 
   useEffect(() => {
-    window.electron.receive('update-downloaded', () => {
-      setShowUpdateConfirmModal(true); // 업데이트가 다운로드되면 모달을 보여줌
-    });
+    if (window.electron) {
+      window.electron.receive('update-downloaded', () => {
+        setShowUpdateConfirmModal(true); // 업데이트가 다운로드되면 모달을 보여줌
+      });
+    }
   }, []);
 
   return (
