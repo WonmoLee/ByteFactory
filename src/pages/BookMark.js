@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '../components/Modal';
-
+import Notepad from '../components/Notepad';
 import '../assets/BookMark.css'; // 스타일시트 임포트
 import FinderIcon from '../assets/imgs/finderIcon.png';
 
@@ -64,23 +64,6 @@ const BookMark = () => {
             document.removeEventListener('click', handleClickOutside);
         };
     }, [contextMenu]);    
-
-    const setNotepadContext = (e, node, id) => {
-        const node_id = findNodeById(node, id);
-        setShowNotepad({ visible: true, id: node_id.id, maintext: node_id.name, context: e.target.value });
-
-        const updateRecursive = (nodes, nodeId, newContext) => nodes.map((node) => {
-            if (node.id === nodeId) {
-                return { ...node, context: newContext };
-            } else if (node.children) {
-                return { ...node, children: updateRecursive(node.children, nodeId, newContext) }; // 재귀적으로 자식 노드도 업데이트
-            }
-            
-            return node;
-        });
-
-        setNodes(updateRecursive(nodes, node_id.id, e.target.value));
-    }
 
     const addFolder = () => {
         if (!folderName.trim()) {
@@ -754,7 +737,7 @@ const BookMark = () => {
                         type="text"
                         value={folderName}
                         // 스타일 클래스 이름 적용
-                        className="input"
+                        className="left-panel-input"
                         onChange={(e) => setFolderName(e.target.value)}
                         placeholder="폴더 이름"
                     />
@@ -765,14 +748,14 @@ const BookMark = () => {
                     <input
                         type="text"
                         value={bookmarkName}
-                        className="input"
+                        className="left-panel-input"
                         onChange={(e) => setBookmarkName(e.target.value)}
                         placeholder="북마크 이름"
                     />
                     <input
                         type="text"
                         value={bookmarkUrl}
-                        className="input"
+                        className="left-panel-input"
                         onChange={(e) => setBookmarkUrl(e.target.value)}
                         placeholder="북마크 URL"
                     />
@@ -780,7 +763,7 @@ const BookMark = () => {
                     <input
                         type="text"
                         value={notepad}
-                        className="input"
+                        className="left-panel-input"
                         onChange={(e) => setNotepad(e.target.value)}
                         placeholder="메모 이름"
                     />
@@ -796,16 +779,12 @@ const BookMark = () => {
                 {renderContextMenu()}
             </div>
 
-            <div className='notepad' style={{ visibility: showNotepad.visible ? "visible" : "hidden" }}>
-                <div className='notepad-head'>
-                    <p className='notepad-maintext'>{showNotepad.maintext}</p>
-                    <button className='notepad-close' onClick={() => {setShowNotepad(false)}}>X</button>
-                </div>
-                <div className='notepad-body'>
-                    <textarea className='notepad-text' 
-                     value={showNotepad.context} onChange={(e) => {setNotepadContext(e, nodes, showNotepad.id)}}></textarea>
-                </div>
-            </div>
+            <Notepad
+                showNotepad={showNotepad}
+                setShowNotepad={setShowNotepad}
+                setNodes={setNodes}
+                nodes={nodes}
+            />
 
             <Modal show={showModal} onClose={handleCloseModal}>
                 {modalContent}
