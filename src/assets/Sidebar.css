@@ -24,6 +24,10 @@
   transition: background-color 0.3s;
 }
 
+.click-item {
+  background-color: #000000;
+}
+
 .sidebar-item:hover {
   background-color: #221d1d; /* 호버 색상 변경 */
   cursor: pointer;
