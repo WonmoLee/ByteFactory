@@ -8,6 +8,10 @@ const BookMark = () => {
     const [nodes, setNodes] = useState([]);
     const [bookmarkName, setBookmarkName] = useState('');
     const [bookmarkUrl, setBookmarkUrl] = useState('');
+
+    const [notepad, setNotepad] = useState('');
+    const [showNotepad, setShowNotepad] = useState({visible : false, id: null, maintext: null, context: null});
+
     const [folderName, setFolderName] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [modalContent, setModalContent] = useState('');
@@ -61,6 +65,23 @@ const BookMark = () => {
         };
     }, [contextMenu]);    
 
+    const setNotepadContext = (e, node, id) => {
+        const node_id = findNodeById(node, id);
+        setShowNotepad({ visible: true, id: node_id.id, maintext: node_id.name, context: e.target.value });
+
+        const updateRecursive = (nodes, nodeId, newContext) => nodes.map((node) => {
+            if (node.id === nodeId) {
+                return { ...node, context: newContext };
+            } else if (node.children) {
+                return { ...node, children: updateRecursive(node.children, nodeId, newContext) }; // 재귀적으로 자식 노드도 업데이트
+            }
+            
+            return node;
+        });
+
+        setNodes(updateRecursive(nodes, node_id.id, e.target.value));
+    }
+
     const addFolder = () => {
         if (!folderName.trim()) {
             // 폴더 이름이 비어 있는 경우, 모달을 띄워 사용자에게 알립니다.
@@ -87,7 +108,36 @@ const BookMark = () => {
     };    
 
     const openFinder = () => {
-        window.electron.send('open-link-external', '파일 탐색기');
+        if (window && window.electron) {
+            window.electron.send('open-link-external', '파일 탐색기');
+          } else {
+            document.getElementById('fileInput').click();
+          }
+    }
+
+    const addNotepad = () => {
+        if (!notepad.trim()) {
+            handleOpenModal('메모 이름을 입력해주세요.');
+            return;
+        }
+    
+        const newNotepad = {
+            id: Date.now(),
+            name: notepad,
+            context : "",
+            type: 'notepad',
+            parentId: selectedPath[selectedPath.length - 1] || null, // selectedPath의 마지막 요소를 부모 ID로 사용
+        };
+    
+        if (newNotepad.parentId) {
+            // 선택된 폴더(현재 선택된 경로의 마지막 요소)에 새 메모를 추가합니다.
+            const updatedNodes = addNodeToFolder(nodes, newNotepad.parentId, newNotepad);
+            setNodes(updatedNodes);
+        } else {
+            // 최상위 레벨에 새 메모를 추가합니다.
+            setNodes([...nodes, newNotepad]);
+        }
+        setNotepad('');
     }
 
     const addBookmark = () => {
@@ -216,7 +266,17 @@ const BookMark = () => {
     };
 
     const openExternalLink = (url) => {
-        window.electron.send('open-link-external', url);
+        if (window && window.electron) {
+            window.electron.send('open-link-external', url); // 일렉트론 환경에서 링크 열기
+          } else {
+            window.open(url, '_blank'); // 웹 환경에서 링크 열기
+          }
+    };
+
+    const openClickNotepad = (node) => {
+        if (!node) return null;
+
+        setShowNotepad({visible : true, id : node.id, maintext : node.name, context : node.context});
     };
 
     const handleFolderClick = (folderId) => {
@@ -318,7 +378,10 @@ const BookMark = () => {
                     >
                         <div key={node.id}
                             className="node-container"
-                            onClick={() => node.type === 'folder' ? handleFolderClick(node.id) : openExternalLink(node.url)}
+                            onClick={() => node.type === 'folder' ? handleFolderClick(node.id)
+                                            : node.type === 'bookmark' ? openExternalLink(node.url)
+                                            : openClickNotepad(node)
+                            }
                             onContextMenu={(e) => handleContextMenu(e, node.id)}
                             draggable="true" // 드래그 가능한 요소로 설정
                             onDragStart={(e) => handleDragStart(e, node.id)} // 드래그 시작 이벤트 핸들러
@@ -344,7 +407,10 @@ const BookMark = () => {
                                 />
                             ) : (
                                 <span className="node-label">
-                                    {node.type === 'folder' ? (selectedPath.includes(node.id) ? '📂' : '📁') : '🔗'} {node.name}
+                                    {node.type === 'folder' ? (selectedPath.includes(node.id) ? '📂' : '📁')
+                                         : node.type === 'bookmark' ? '🔗'
+                                         : '📝' // 여긴 지금 notepad
+                                     } {node.name}
                                 </span>
                             )}
                         </div>
@@ -429,7 +495,7 @@ const BookMark = () => {
         const draggedNodeId = e.dataTransfer.getData("nodeId");
         const childrenId = isFindNodeChildren(nodes, draggedNodeId, targetNodeId);
 
-        if(findNodeById(nodes, targetNodeId).type === "bookmark") {
+        if(findNodeById(nodes, targetNodeId).type !== "folder") {
             return false;
         }
 
@@ -711,6 +777,14 @@ const BookMark = () => {
                         placeholder="북마크 URL"
                     />
                     <button onClick={addBookmark} className="button">북마크 추가</button>
+                    <input
+                        type="text"
+                        value={notepad}
+                        className="input"
+                        onChange={(e) => setNotepad(e.target.value)}
+                        placeholder="메모 이름"
+                    />
+                    <button onClick={addNotepad} className="button">메모 추가</button>
                     <button onClick={openFinder} className="btn_finder">
                         <p>파일탐색기 / <img src={FinderIcon} alt="Finder" /></p>
                     </button>
@@ -721,9 +795,23 @@ const BookMark = () => {
                 {renderColumnView()}
                 {renderContextMenu()}
             </div>
+
+            <div className='notepad' style={{ visibility: showNotepad.visible ? "visible" : "hidden" }}>
+                <div className='notepad-head'>
+                    <p className='notepad-maintext'>{showNotepad.maintext}</p>
+                    <button className='notepad-close' onClick={() => {setShowNotepad(false)}}>X</button>
+                </div>
+                <div className='notepad-body'>
+                    <textarea className='notepad-text' 
+                     value={showNotepad.context} onChange={(e) => {setNotepadContext(e, nodes, showNotepad.id)}}></textarea>
+                </div>
+            </div>
+
             <Modal show={showModal} onClose={handleCloseModal}>
                 {modalContent}
             </Modal>
+
+            <input type="file" id="fileInput" style={{display: "none"}} />
         </div>
     );  
 };
