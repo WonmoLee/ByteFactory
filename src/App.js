@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import Card from './components/Card';
 import Sidebar from './components/Sidebar'; // 사이드바 컴포넌트 import
@@ -6,12 +6,14 @@ import TextDiffViewer from './pages/TextDiffViewer';
 import ClipboardMonitor from './pages/ClipboardMonitor';
 import BookMark from './pages/BookMark';
 //import DarkModeToggle from './components/DarkModeToggle';
+import UpdateConfirmModal from './components/modal/UpdateConfirmModal';
 import Modal from './components/Modal';
 import ScrollToTopButton from './components/ScrollToTopButton';
 import './App.css';
 import logo from './assets/imgs/logo.png';
 
 const App = () => {
+  const [showUpdateConfirmModal, setShowUpdateConfirmModal] = useState(false);
   const [showCards, setShowCards] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -65,6 +67,12 @@ const App = () => {
     }, 300);
   };
 
+  useEffect(() => {
+    window.electron.receive('update-downloaded', () => {
+      setShowUpdateConfirmModal(true); // 업데이트가 다운로드되면 모달을 보여줌
+    });
+  }, []);
+
   return (
     <Router>
       <div className="App">
@@ -106,7 +114,8 @@ const App = () => {
             </Routes>
           )}
         </div>
-        <ScrollToTopButton />
+        <ScrollToTopButton/>
+        {showUpdateConfirmModal && <UpdateConfirmModal onClose={() => setShowUpdateConfirmModal(false)} />}
       </div>
     </Router>
   );

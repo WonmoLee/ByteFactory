@@ -1,0 +1,43 @@
+.update-confirm-modal {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  width: auto;
+  z-index: 1000;
+  animation: slideUp 0.5s ease-out forwards; /* 애니메이션 적용 */
+}
+
+@keyframes slideUp {
+  from {
+    bottom: -100px; /* 시작 위치 */
+    opacity: 0; /* 시작 투명도 */
+  }
+  to {
+    bottom: 20px; /* 최종 위치 */
+    opacity: 1; /* 최종 투명도 */
+  }
+}
+
+.update-confirm-modal p {
+  color: black; /* p 태그의 글자색을 검은색으로 설정 */
+  margin-bottom: 15px; /* p 태그와 버튼 사이의 간격 */
+}
+
+.update-confirm-button {
+  margin-right: 10px; /* 오른쪽 버튼과의 간격 */
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  background-color: #007bff;
+}
+
+/* 마지막 버튼의 오른쪽 마진 제거 */
+.update-confirm-button:last-child {
+  margin-right: 0;
+}

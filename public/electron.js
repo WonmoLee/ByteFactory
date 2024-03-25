@@ -37,6 +37,10 @@ import('electron-is-dev').then((module) => {
     ipcMain.on('open-link-external', (event, url) => {
       shell.openExternal(url);
     });
+
+    ipcMain.on('apply-update', () => {
+        autoUpdater.quitAndInstall();
+    });
   
     // 개발 환경인지 프로덕션 환경인지에 따라 URL 분기
     if (isDev) {
@@ -52,36 +56,6 @@ import('electron-is-dev').then((module) => {
     // 창이 닫힐 때 발생하는 이벤트
     win.on('closed', () => {
       win = null;
-    });
-  }
-
-  function showUpdateConfirmModal() {
-    let modal = new BrowserWindow({
-      width: 400,
-      height: 200,
-      parent: win, // mainWindow는 메인 BrowserWindow 인스턴스의 변수명입니다.
-      modal: true,
-      show: false,
-      frame: false, // 최소화 및 닫기 버튼 제거
-      webPreferences: {
-        preload: path.join(__dirname, '../build/preload.js'),
-        nodeIntegration: false,
-        contextIsolation: true,
-      }
-    });
-  
-    modal.loadURL(`file://${path.join(__dirname, '../build/updateConfirm.html')}`); // 업데이트 확인 HTML 파일 로드
-  
-    modal.once('ready-to-show', () => {
-      modal.show();
-    });
-  
-    // 모달 창에서 응답을 받음
-    ipcMain.once('update-confirm-response', (event, acceptUpdate) => {
-      if (acceptUpdate) {
-        autoUpdater.quitAndInstall();
-      }
-      modal.close();
     });
   }
   
@@ -105,17 +79,17 @@ import('electron-is-dev').then((module) => {
     autoUpdater.checkForUpdatesAndNotify();
   });
 
+  autoUpdater.on('update-available', () => {
+    win.webContents.send('update-available');
+  });
+
   autoUpdater.on('download-progress', (progressObj) => {
     let message = `다운로드 속도: ${progressObj.bytesPerSecond}`;
     message += ` - 진행 상태: ${progressObj.percent}%`;
     message += ` (${progressObj.transferred}/${progressObj.total})`;
-  
-    // 이 메시지를 사용하여 UI에 진행 상태를 표시할 수 있습니다.
-    // 예: mainWindow.webContents.send('download-progress', message);
   });
   
   autoUpdater.on('update-downloaded', () => {
-    // dialog.showMessageBox 대신 새로 작성한 모달 함수를 사용합니다.
-    showUpdateConfirmModal();
+    win.webContents.send('update-downloaded');
   });
 });
