@@ -2,7 +2,7 @@
   "name": "bf",
   "version": "0.1.0",
   "description": "Development support app",
-  "author": "Wonmo Lee",
+  "author": "WM",
   "license": "MIT",
   "main": "electron.js",
   "private": true,
@@ -42,7 +42,7 @@
     "eject": "react-scripts eject",
     "react-start": "set BROWSER=none&& react-scripts start",
     "electron-start": "electron ./public/electron.js",
-    "dev": "concurrently \"npm run react-start\" \"wait-on http://localhost:3000 && npm run electron-start\"",
+    "dev": "concurrently \"yarn run react-start\" \"wait-on http://localhost:3000 && yarn run electron-start\"",
     "deploy": "electron-builder build",
     "release": "node build.js"
   },
