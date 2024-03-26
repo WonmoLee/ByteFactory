@@ -89,7 +89,7 @@ const App = () => {
             <button id="close-btn" onClick={close}>X</button>
           </div>
         </header>
-        <Sidebar isOpen={sidebarOpen} setHeaderTitle={setHeaderTitle}/>
+        <Sidebar isOpen={sidebarOpen} setHeaderTitle={setHeaderTitle} headerTitle={headerTitle}/>
         <div className={`content-area ${sidebarOpen ? 'content-shifted' : ''}`}> 
           {showCards && (
             <div>

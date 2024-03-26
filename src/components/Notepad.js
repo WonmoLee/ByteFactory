@@ -32,7 +32,7 @@ const Notepad = ({ showNotepad, setShowNotepad, setNodes, nodes }) => {
                 <button className='notepad-close' onClick={() => setShowNotepad({ visible: false, id: null, maintext: null, context: null })}>X</button>
             </div>
             <div className='notepad-body'>
-                <textarea className='notepad-text' value={showNotepad.context} onChange={handleInputChange}></textarea>
+                <textarea className='notepad-text' value={showNotepad.context || ''} onChange={handleInputChange}></textarea>
             </div>
         </div>
     );
