@@ -62,10 +62,12 @@ const Calendar = () => {
 
   const handleContextMenu = (event, dayId) => {
 
-    if (ctrlPressed) { // ctrl 키가 눌려있지 않을 때만 처리
-      setSelectedPath([...selectedPath, 'b_' + dayId]);
-    } else {
-      setSelectedPath(['b_' + dayId]);
+    if (selectedPath.includes('b_' + dayId) === -1) {
+      if (ctrlPressed) { // ctrl 키가 눌려있지 않을 때만 처리
+        setSelectedPath([...selectedPath, 'b_' + dayId]);
+      } else {
+        setSelectedPath(['b_' + dayId]);
+      }
     }
 
     event.preventDefault();
@@ -90,13 +92,31 @@ const Calendar = () => {
     );
   };
 
+
+
+
+
+
+
+  const renderDayView = (dayId) => {
+    return (
+      days.map(day => (
+          day.day === dayId && (
+              <div key={day.id} className={'new-day ' + day.id}>
+                  {day.title}
+              </div>
+          )
+      ))
+    )
+  }
+
   const handleCreateDay = () => {
-    let strippedDays = selectedPath.map(dayId => dayId.substring(2)); // 'b_' 제거
-    let sortedDays = strippedDays.sort(); // 정렬
-    let toDayId = sortedDays[0];
-    let frDayId = sortedDays[sortedDays.length - 1];
-    let newDays = sortedDays.map(dayId => ({ // 정렬된 각 요소에 대해 새로운 일을 만듭니다.
-        id: dayId,
+    const uniqueId = Date.now().toString();
+    const strippedDays = selectedPath.map(dayId => dayId.substring(2)); // 'b_' 제거
+    const sortedDays = strippedDays.sort(); // 정렬
+    
+    const newDays = sortedDays.map(dayId => ({ // 정렬된 각 요소에 대해 새로운 일을 만듭니다.
+        id: uniqueId,
         day: dayId,
         title: "새로운 일",
         content: null
@@ -122,6 +142,10 @@ const Calendar = () => {
     }
     
   };
+
+
+
+
 
 
 
@@ -174,17 +198,7 @@ const Calendar = () => {
     previousMonthDates.push(lastDayOfLastMonth - i);
   }
 
-  const renderDayView = (dayId) => {
-    return (
-      days.map(day => (
-          day.day === dayId && (
-              <div key={day.id} className={'new-day ' + day.id}>
-                  {day.title + "  " + day.id}
-              </div>
-          )
-      ))
-    )
-  }
+ 
 
 
   return (
@@ -192,7 +206,7 @@ const Calendar = () => {
       <div>
         <button onClick={() => {goToPreviousMonth()}}>Previous Month</button>
         <button onClick={() => {goToNextMonth()}}>Next Month</button>
-        <button onClick={() => {}}>아이디 확인</button>
+        <button onClick={() => {console.log(selectedPath + "     " + days)}}>아이디 확인</button>
       </div>
       <table className='cld-table'>
         <thead>
