@@ -300,7 +300,7 @@ const BookMark = () => {
     
         // 최상위 노드 컬럼 추가
         columns.push(
-            <div key="column-root" style={{ minWidth: '200px', padding: '10px' }}>
+            <div key="column-root" style={{ minWidth: '200px', padding: '10px 0px 10px 10px' }}>
                 {renderNodes(nodes.filter(node => !node.parentId), [])}
             </div>
         );
@@ -313,7 +313,7 @@ const BookMark = () => {
                 // 마지막 컬럼인 경우에는 borderRight 스타일을 적용하지 않습니다.
                 const columnStyle = {
                     minWidth: '200px',
-                    padding: '10px',
+                    padding: '10px 0px 10px 10px',
                 };
                 columns.push(
                     <div key={`column-${folderId}`} style={columnStyle}>
@@ -343,7 +343,7 @@ const BookMark = () => {
         // nodes 배열에 내용이 있을 경우 기존 로직을 수행합니다.
         return (
             <div className="node-outter-container"
-                 style={{ minWidth: '200px', borderRight: '1px solid #ccc', padding: '10px'}}
+                 style={{ minWidth: '200px', borderRight: '1px solid #ccc', padding: '10px 10px 10px 0px'}}
             >
                 {nodes.map(node => (
                     <div key={node.id} className="node-big-container"
@@ -389,12 +389,17 @@ const BookMark = () => {
                                     autoFocus
                                 />
                             ) : (
-                                <span className="node-label">
-                                    {node.type === 'folder' ? (selectedPath.includes(node.id) ? '📂' : '📁')
-                                         : node.type === 'bookmark' ? <img src={new URL('/favicon.ico', node.url).href} alt="🔗" />
-                                         : '📝'
-                                     } {node.name}
-                                </span>
+                                <div className='div-node-label'>
+                                    <span className="node-label">
+                                        {node.type === 'folder' ? (selectedPath.includes(node.id) ? '📂' : '📁')
+                                            : node.type === 'bookmark' ? <img src={new URL('/favicon.ico', node.url).href} alt="🔗" />
+                                            : '📝'
+                                        }
+                                     </span>
+                                    <span className="node-label node-label2">
+                                        {node.name}
+                                    </span>
+                                </div>
                             )}
                         </div>
                     </div>

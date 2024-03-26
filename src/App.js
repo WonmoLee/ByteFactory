@@ -5,6 +5,8 @@ import Sidebar from './components/Sidebar'; // 사이드바 컴포넌트 import
 import TextDiffViewer from './pages/TextDiffViewer';
 import ClipboardMonitor from './pages/ClipboardMonitor';
 import BookMark from './pages/BookMark';
+import Calendar from './pages/Calendar';
+
 //import DarkModeToggle from './components/DarkModeToggle';
 import UpdateConfirmModal from './components/modal/UpdateConfirmModal';
 import Modal from './components/Modal';
@@ -113,6 +115,7 @@ const App = () => {
               <Route path="/TextDiffViewer" element={<TextDiffViewer />} />
               <Route path="/ClipboardMonitor" element={<ClipboardMonitor />} />
               <Route path="/BookMark" element={<BookMark />} />
+              <Route path="/Calendar" element={<Calendar />} />
             </Routes>
           )}
         </div>

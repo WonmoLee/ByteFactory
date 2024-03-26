@@ -94,13 +94,25 @@
     background-color: #726b6b;
 }
 
+.div-node-label {
+    display: flex;
+    align-items: center;
+}
+
 .node-label {
+    padding: 0px 0px 0px 5px;
     color: #ffffff;
 }
 
+.node-label2 {
+    padding: 0px 0px 0px 7px;
+}
+
 .node-label img {
-    height: 2em; /* 이미지의 높이를 현재 폰트 크기와 동일하게 설정 */
-    vertical-align: middle; /* 이미지를 텍스트의 중간 높이에 맞춤 */
+    vertical-align: middle;
     margin-right: 8px;
+    border-radius: 50%;
+    background-size: contain;
+    width: 24px;
   }
 
