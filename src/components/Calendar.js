@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import '../assets/Calendar.css';
 
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -18,7 +19,7 @@ const Calendar = () => {
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
   const lastDayOfLastMonth = new Date(currentYear, currentMonth, 0).getDate();
 
-  const getDayClassName = (year, month, day) => {
+  const getDayClassName = (year, month, day, isWeekend) => {
     let className = '';
     if (month < currentMonth || (month === currentMonth && day < currentDay)) {
       className = 'prev-month';
@@ -29,6 +30,9 @@ const Calendar = () => {
     }
     if (day === currentDay && month === currentMonth && year === currentYear) {
       className += ' today';
+    }
+    if (isWeekend) {
+      className += ' weekend';
     }
     return className;
   };
@@ -49,7 +53,7 @@ const Calendar = () => {
       <table className='cld-table'>
         <thead>
           <tr>
-            <th>일</th>
+            <th className='weekend'>일</th>
             <th>월</th>
             <th>화</th>
             <th>수</th>
@@ -67,7 +71,7 @@ const Calendar = () => {
                 if (day <= 0) {
                   month = currentMonth - 1;
                   year = currentYear;
-                  day = previousMonthDates[previousMonthDates.length + day];
+                  day = previousMonthDates[previousMonthDates.length + day - 1];
                 } else if (day > daysInMonth) {
                   month = currentMonth + 1;
                   year = currentYear;
@@ -76,9 +80,17 @@ const Calendar = () => {
                   month = currentMonth;
                   year = currentYear;
                 }
+                const isWeekend = dayIndex === 0; // Saturday (6) and Sunday (0)
                 return (
-                  <td key={dayIndex} className={getDayClassName(year, month, day)}>
-                    {day}
+                  <td key={dayIndex} className={getDayClassName(year, month, day, isWeekend)}>
+                    <div className='cdl-day'>
+                      <div className={'cdl-top t_' + year + '' + String(month).padStart(2, 0) + '' + String(day).padStart(2, 0)}>
+                        {day}
+                      </div>
+                      <div className={'cdl-body b_' + year + '' + String(month).padStart(2, 0) + '' + String(day).padStart(2, 0)}>
+                        안녕.
+                      </div>
+                    </div>
                   </td>
                 );
               })}

@@ -1,5 +1,41 @@
 
 .cld-table {
-    height: 500px;
-    width: 500px;
+    width: 100%;
+    border: 1px solid white;
+    border-collapse: collapse;
+  }
+  
+.cld-table th, td {
+border: 1px solid white;
+}
+
+.cld-table {
+    height: 700px;
+    width: calc(100% - 20px);
+}
+
+.cld-table th {
+    font-size: x-large;
+}
+
+.cld-table th.weekend {
+    color: red;
+}
+
+.cdl-day {
+    height: 100%;
+}
+
+.cdl-top {
+    background-color: white;
+    font-size: x-large;
+    color: black;
+}
+
+.weekend .cdl-top {
+    color: red;
+}
+
+.cdl-body {
+    font-size: large;
 }
