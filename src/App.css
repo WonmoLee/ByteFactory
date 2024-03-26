@@ -99,5 +99,6 @@
 }
 
 .header-text {
-  padding: 0px 10px;
+  font-size: larger;
+  padding: 0px 10px 3px 10px;
 }
