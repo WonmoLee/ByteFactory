@@ -2,7 +2,7 @@
   "name": "bf",
   "version": "0.1.0",
   "description": "Development support app",
-  "author": "WM",
+  "author": "WM Corp.",
   "license": "MIT",
   "main": "electron.js",
   "private": true,
