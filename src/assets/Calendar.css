@@ -14,7 +14,14 @@ border: 1px solid white;
     width: calc(100% - 20px);
 }
 
+.cld-table td {
+    width: 200px;
+    height: 100px;
+}
+
 .cld-table th {
+    padding: 1px 0px 2px 8px;
+    color: white;
     font-size: x-large;
 }
 
@@ -24,9 +31,12 @@ border: 1px solid white;
 
 .cdl-day {
     height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .cdl-top {
+    padding: 1px 0px 2px 8px;
     background-color: white;
     font-size: x-large;
     color: black;
@@ -36,6 +46,15 @@ border: 1px solid white;
     color: red;
 }
 
+.prev-month {
+    opacity: 0.5;
+}
+
+.next-month {
+    opacity: 0.5;
+}
+
 .cdl-body {
+    height: 100%;
     font-size: large;
 }
