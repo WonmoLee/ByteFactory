@@ -2,6 +2,7 @@ import React from 'react';
 import '../assets/Card.css'; // CSS 파일을 불러옵니다.
 import image1 from '../assets/imgs/service1.png';
 import image2 from '../assets/imgs/service2.png';
+import image3 from '../assets/imgs/service3.png';
 
 const Card = ({ No, title, description }) => {
 
@@ -9,6 +10,7 @@ const Card = ({ No, title, description }) => {
     const images = {
       '1': image1,
       '2': image2,
+      '3': image3,
     };
 
     if(No == null) {
