@@ -391,8 +391,8 @@ const BookMark = () => {
                             ) : (
                                 <span className="node-label">
                                     {node.type === 'folder' ? (selectedPath.includes(node.id) ? '📂' : '📁')
-                                         : node.type === 'bookmark' ? '🔗'
-                                         : '📝' // 여긴 지금 notepad
+                                         : node.type === 'bookmark' ? <img src={new URL('/favicon.ico', node.url).href} alt="🔗" />
+                                         : '📝'
                                      } {node.name}
                                 </span>
                             )}
