@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import CalenderNotepadpad from '../components/CalenderNotepad';
 import '../assets/Calendar.css';
 
 const Calendar = () => {
@@ -7,6 +8,10 @@ const Calendar = () => {
   const [selectedPath, setSelectedPath] = useState([]);
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, selectedDayId: null });
   const [ctrlPressed, setCtrlPressed] = useState(false); // ctrl 키 상태 추가
+
+  const [showNotepad, setShowNotepad] = useState({visible : false, id: null, day: null, maintext: null, context: null});
+
+
   const baseColors = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff", "#800000"
                     , "#008000", "#000080", "#808000", "#800080", "#008080", "#ff8000", "#ff0080"
                     , "#80ff00", "#80ff80", "#0080ff", "#8000ff", "#ff8080", "#80ffff"];
@@ -79,6 +84,9 @@ const Calendar = () => {
         };
     }, [contextMenu]);    
 
+
+
+
   const handleContextMenu = (event, dayId) => {
     if (!selectedPath.includes('b_' + dayId)) {
      
@@ -98,6 +106,9 @@ const Calendar = () => {
         selectedDayId: dayId
     });
   };
+
+
+
 
   const renderContextMenu = () => {
     if (!contextMenu.visible) return null;
@@ -134,7 +145,7 @@ const Calendar = () => {
             cursor: "pointer"
           } : null}
 
-          onClick={(e) => onLineCilck(e, day)}
+          onMouseDown={(e) => onMouseDown(e, day)}
         >
           {day.index === index ? day.title : ''}
         </div>
@@ -142,8 +153,26 @@ const Calendar = () => {
     }
   };
   
-  const onLineCilck = (e, day) => {
-    alert(day);
+  const onMouseDown = (e, day) => {
+    setSelectedPath([]);
+    e.preventDefault();
+    e.stopPropagation();
+    
+    let firstDay = findFirstId(day.id, day.firstDay);
+    setShowNotepad({visible : true, id: firstDay.id, day: firstDay.day, maintext: firstDay.title, context: firstDay.context});
+  }
+
+  // 첫날 찾기
+  const findFirstId = (id, firstDay) => {
+    let firstId = null;
+
+    days.forEach(findDay => {
+      if (findDay.id === id && findDay.day === firstDay) {
+        firstId = findDay;
+      }
+    });
+
+    return firstId; // 함수의 반환문으로 값을 반환합니다.
   }
 
   const renderDayView = (dayId, index) => {
@@ -313,7 +342,7 @@ const Calendar = () => {
   // 달력 클릭
   const handleDayClick = (event, dayId) => {
     let newPathIndex;
-
+    
     if(String(dayId).substring(0, 1) !== 'b') {
       setSelectedPath([]);
     }
@@ -466,6 +495,12 @@ const Calendar = () => {
         </tbody>
       </table>
       {renderContextMenu()}
+      <CalenderNotepadpad
+          showNotepad={showNotepad}
+          setShowNotepad={setShowNotepad}
+          setDays={setDays}
+          days={days}
+      />
     </div>
   );
 };
