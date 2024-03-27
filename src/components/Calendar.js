@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import '../assets/Calendar.css';
 
 const Calendar = () => {
-  const [days, setDays] = useState([]);
+  const [days, setDays] = useState([]); // {id:uniqueId, day:dayId, index, title, context, length, backgroundColor, color}
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedPath, setSelectedPath] = useState([]);
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, selectedDayId: null });
   const [ctrlPressed, setCtrlPressed] = useState(false); // ctrl 키 상태 추가
+  const baseColors = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff", "#800000"
+                    , "#008000", "#000080", "#808000", "#800080", "#008080", "#ff8000", "#ff0080"
+                    , "#80ff00", "#80ff80", "#0080ff", "#8000ff", "#ff8080", "#80ffff"];
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -61,8 +64,8 @@ const Calendar = () => {
     }, [contextMenu]);    
 
   const handleContextMenu = (event, dayId) => {
-
-    if (selectedPath.includes('b_' + dayId) === -1) {
+    if (!selectedPath.includes('b_' + dayId)) {
+     
       if (ctrlPressed) { // ctrl 키가 눌려있지 않을 때만 처리
         setSelectedPath([...selectedPath, 'b_' + dayId]);
       } else {
@@ -97,38 +100,194 @@ const Calendar = () => {
 
 
 
+  const renderDayLineView = (day, dayId, index) => {
+    if (day.day === dayId && day.index === index) {
+      return (
+        <div key={day.id + "_" + index} className={'new_line ' +  (day.index === index ? day.id : '')}
+          style={day.index === index ? {
+            backgroundColor: day.backgroundColor,
+            color: day.color
+          } : null}
+        >
+          {day.index === index ? day.title : ''}
+        </div>
+      )
+    }
+  };
+  
 
-  const renderDayView = (dayId) => {
+  const renderDayView = (dayId, index) => {
     return (
       days.map(day => (
-          day.day === dayId && (
-              <div key={day.id} className={'new-day ' + day.id}>
-                  {day.title}
-              </div>
-          )
+        renderDayLineView(day, dayId, index)
       ))
     )
   }
 
+  // 새로운 Day 생성
   const handleCreateDay = () => {
-    const uniqueId = Date.now().toString();
+    let createDays, newDays, uniqueId, bColor, fColor, dayIndex;
     const strippedDays = selectedPath.map(dayId => dayId.substring(2)); // 'b_' 제거
     const sortedDays = strippedDays.sort(); // 정렬
     
-    const newDays = sortedDays.map(dayId => ({ // 정렬된 각 요소에 대해 새로운 일을 만듭니다.
-        id: uniqueId,
-        day: dayId,
-        title: "새로운 일",
-        content: null
-    }));
+    createDays = createDayArray(sortedDays);  //[[], []]
+
+    dayIndex = getIndexCheck(createDays);
+   
+    newDays = createDays.map((createDay, i) => {
+      uniqueId = Number(Date.now().toString()) + i;
+   
+      bColor = getRandomColor();
+      fColor = getRandomColor(bColor);
+
+      return createDay.map((dayId) => ({
+          id: uniqueId,
+          day: dayId,
+          title: "새로운 일",
+          context: null,
+          index: dayIndex[i],
+          backgroundColor: bColor,
+          color: fColor
+      }));
+    });
+
+    newDays = [].concat(...newDays);
     setDays(prevDays => [...prevDays, ...newDays]);
   };
 
+  // 인덱스 체크
+  const getIndexCheck = (createDays) => {
+    let dayIndexArr, dayIndex, returnIndex, dayIds;
+    let dayIndexSet = new Set();
+    dayIds = days.map(obj => [obj.day, obj.index]);
+    returnIndex = [];
+
+    createDays.forEach((createDay) => {
+      dayIndex = 0;
+      dayIndexSet.clear();
+
+      for(let i = 0; i < createDay.length; i++) {
+        if(days.length !== 0) {
+          if(i !== 0) {
+            if(!isNextDay(createDay[i - 1], createDay[i])) {
+              break;
+            }
+          }
+
+          dayIds.forEach(([day, index]) => {
+            if(createDay[i] === day) {
+              dayIndexSet.add(index);
+            }
+          });
+        }
+      }
+    
+
+      dayIndexArr = Array.from(dayIndexSet);
+      dayIndexArr = dayIndexArr.sort();
+      for(let i = 0; i < dayIndexArr.length; i++) {
+        if(dayIndexArr.includes(dayIndex)) {
+          dayIndex = dayIndex + 1;
+        }
+      }
+
+      returnIndex.push(dayIndex);
+    });
+
+    return returnIndex;
+  }
+
+  // 랜덤 색깔 가져오기
+  const getRandomColor = (color) => {
+      if(!color) {
+        return baseColors[Math.floor(Math.random() * baseColors.length)];
+      } else {
+        // 주어진 색상
+        var givenColor = color.slice(1); // # 제거
+        var r = parseInt(givenColor.substring(0, 2), 16); // 16진수를 10진수로 변환
+        var g = parseInt(givenColor.substring(2, 4), 16);
+        var b = parseInt(givenColor.substring(4, 6), 16);
+        
+        // 보색 계산
+        var compR = 255 - r;
+        var compG = 255 - g;
+        var compB = 255 - b;
+        
+        // 16진수로 변환
+        var compHex = "#" + ((1 << 24) + (compR << 16) + (compG << 8) + compB).toString(16).slice(1);
+        return compHex;
+      }
+  }
+
+
+
+  // 붙은 날짜끼리 처리.
+  const createDayArray = (sortedDays) => {
+    let nextDays, nextDay;
+    nextDays = [];
+    nextDay = [];
+
+    sortedDays.forEach((e, i, a) => {
+      if(i !== 0) {
+        if(isNextDay(a[i - 1], e)) {
+          nextDay.push(e);
+        } else {
+          nextDays.push(nextDay);
+          nextDay = [];
+          nextDay.push(e);
+        }
+      } else {
+        nextDay.push(e);
+      }
+
+      if(i === a.length - 1) {
+        nextDays.push(nextDay);
+      }
+    });
+
+    return nextDays;
+  }
+
+
+
+  // 내일이랑 같은지
+  const isNextDay = (todayDay , tomorrowDay) => {
+    let dateString, year, month, day, tomorrow1, tomorrow2;
+
+    dateString = todayDay;
+    year = dateString.slice(0, 4);
+    month = dateString.slice(4, 6);
+    day = dateString.slice(6, 8);
+
+    tomorrow1 = new Date(year, month - 1, day);
+    tomorrow1.setDate(tomorrow1.getDate() + 1);
+
+    dateString = tomorrowDay;
+    year = dateString.slice(0, 4);
+    month = dateString.slice(4, 6);
+    day = dateString.slice(6, 8);
+    tomorrow2 = new Date(year, month - 1, day);
+
+    // 다음 날짜가 같은지 확인합니다.
+    if (tomorrow1.getTime() === tomorrow2.getTime()) {
+        return true;
+    } else {
+        return false;
+    }
+  }
+
+
+
+  // 달력 클릭
   const handleDayClick = (event, dayId) => {
     let newPathIndex;
 
     if(String(dayId).substring(0, 1) !== 'b') {
       setSelectedPath([]);
+    }
+   
+    if(selectedPath.includes(dayId)) {
+      return false;
     }
 
     if (event.ctrlKey && event.button === 0) {
@@ -206,7 +365,7 @@ const Calendar = () => {
       <div>
         <button onClick={() => {goToPreviousMonth()}}>Previous Month</button>
         <button onClick={() => {goToNextMonth()}}>Next Month</button>
-        <button onClick={() => {console.log(selectedPath + "     " + days)}}>아이디 확인</button>
+        <button onClick={() => {console.log(days)}}>아이디 확인</button>
       </div>
       <table className='cld-table'>
         <thead>
@@ -242,8 +401,7 @@ const Calendar = () => {
                 const dayId = year + '' + String(month).padStart(2, 0) + '' + String(day).padStart(2, 0);
                 return (
                   <td key={dayIndex}
-                      className={getDayClassName(year, month, day, isWeekend)
-                        + ' ' + 'a_' + dayId}
+                    className={`${getDayClassName(year, month, day, isWeekend)} a_${dayId}`}
                       onContextMenu={(e) => handleContextMenu(e, dayId)}
                   >
                     <div className='cdl-day'>
@@ -256,7 +414,16 @@ const Calendar = () => {
                             backgroundColor: (selectedPath.includes('b_' + dayId) ? '#007bff' : 'transparent')
                            }}
                       >
-                        {renderDayView(dayId)}
+                        <div className='new-day'>
+                          {renderDayView(dayId, 0)}
+                        </div>
+                        <div className='new-day'>
+                          {renderDayView(dayId, 1)}
+                        </div>
+                        <div className='new-day'>
+                          {renderDayView(dayId, 2)}
+                        </div>
+                        
                       </div>
                     </div>
                   </td>
