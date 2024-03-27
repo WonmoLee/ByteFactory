@@ -65,12 +65,22 @@ border: 1px solid white;
 
 
 .new-day {
+    height: 17px;
     margin: 5px 0px;
-    padding: 2px 10px;
-    height: 17px;   
+    padding: 4px 0px;
 }
 
 .new_line {
-    padding: 2px 10px;
+    height: 18px;
+    padding: 2px 0px;
     font-size: 13px;
+}
+
+.first_line {
+    margin-left: 10px;
+    padding-left: 10px;
+}
+
+.last_line {
+    margin-right: 10px;
 }

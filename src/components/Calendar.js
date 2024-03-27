@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../assets/Calendar.css';
 
 const Calendar = () => {
-  const [days, setDays] = useState([]); // {id:uniqueId, day:dayId, index, title, context, length, backgroundColor, color}
+  const [days, setDays] = useState([]); // {type, id:uniqueId, day:dayId, firstDay, lastDay, index, title, context, length, backgroundColor, color}
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedPath, setSelectedPath] = useState([]);
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, selectedDayId: null });
@@ -11,6 +11,22 @@ const Calendar = () => {
                     , "#008000", "#000080", "#808000", "#800080", "#008080", "#ff8000", "#ff0080"
                     , "#80ff00", "#80ff80", "#0080ff", "#8000ff", "#ff8080", "#80ffff"];
 
+  // 로컬 스토리지에서 북마크 데이터 불러오기
+  useEffect(() => {
+      const savedDays = localStorage.getItem('CalendarDay');
+      if (savedDays) {
+        setDays(JSON.parse(savedDays));
+      }
+  }, []);
+
+  // 로컬 스토리지에 북마크 데이터 저장하기
+  useEffect(() => {
+      if (days.length > 0) {
+          localStorage.setItem('CalendarDay', JSON.stringify(days));
+      }
+  }, [days]);
+
+  
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Control') {
@@ -99,15 +115,26 @@ const Calendar = () => {
 
 
 
-
+  // 라인 그리기
   const renderDayLineView = (day, dayId, index) => {
     if (day.day === dayId && day.index === index) {
       return (
-        <div key={day.id + "_" + index} className={'new_line ' +  (day.index === index ? day.id : '')}
+        <div key={day.id + "_" + index}
+          className={'new_line ' + day.id + ' '
+           + (day.firstDay === dayId && day.lastDay === dayId ? 'first_line last_line'
+           : day.firstDay === dayId ? 'first_line'
+           : day.lastDay === dayId ? 'last_line'
+           : 'body_line'
+           )
+          }
+
           style={day.index === index ? {
             backgroundColor: day.backgroundColor,
-            color: day.color
+            color: day.color,
+            cursor: "pointer"
           } : null}
+
+          onClick={(e) => onLineCilck(e, day)}
         >
           {day.index === index ? day.title : ''}
         </div>
@@ -115,6 +142,9 @@ const Calendar = () => {
     }
   };
   
+  const onLineCilck = (e, day) => {
+    alert(day);
+  }
 
   const renderDayView = (dayId, index) => {
     return (
@@ -133,7 +163,6 @@ const Calendar = () => {
     createDays = createDayArray(sortedDays);  //[[], []]
 
     dayIndex = getIndexCheck(createDays);
-   
     newDays = createDays.map((createDay, i) => {
       uniqueId = Number(Date.now().toString()) + i;
    
@@ -141,9 +170,12 @@ const Calendar = () => {
       fColor = getRandomColor(bColor);
 
       return createDay.map((dayId) => ({
+          type: "Notepad",
           id: uniqueId,
           day: dayId,
-          title: "새로운 일",
+          firstDay: createDay[0],
+          lastDay: createDay[createDay.length - 1],
+          title: dayId === createDay[0] ? "새로운 일" : null,
           context: null,
           index: dayIndex[i],
           backgroundColor: bColor,
